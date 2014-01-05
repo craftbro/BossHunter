@@ -295,6 +295,7 @@ public class BossBlazo extends Boss{
 				Location tLoc = target.getLocation();
 				Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize().multiply(0.6);
 				currentLoc = sLoc.add(vec);
+				entity.setVelocity(vec);
 				Iterator<Entity> itr = entity.getNearbyEntities(1, 1, 1).iterator();
 				while (itr.hasNext()){
 					Entity entity = itr.next();
