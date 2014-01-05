@@ -20,6 +20,11 @@ public class Arena {
 		this.spawn = spawn;
 	}
 	
+	public Arena(main instance, Boss boss){
+		this.plugin = instance;
+		this.boss = boss;
+	}
+	
 	public Location getSpawn(){
 		return spawn;
 	}
@@ -36,8 +41,12 @@ public class Arena {
 		boss.tick();
 	}
 	
+	public void setup(){
+		
+	}
+	
 	public void clear(){
-		for(Entity e : Bukkit.getWorld("world").getEntities()){
+		for(Entity e : Bukkit.getWorld("BOSS").getEntities()){
 			if(!(e instanceof Player)){
 				e.remove();
 			}

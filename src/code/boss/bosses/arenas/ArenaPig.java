@@ -10,7 +10,7 @@ import code.boss.main.main;
 public class ArenaPig extends Arena{
 
 	public ArenaPig(main instance) {
-		super(instance, new BossTest(instance), new Location(Bukkit.getWorld("BOSSworld"), 43, 58, -160));
+		super(instance, new BossTest(instance), new Location(Bukkit.getWorld("BOSS"), 43, 58, -160));
 	}
 
 }

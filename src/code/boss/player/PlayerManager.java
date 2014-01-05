@@ -129,6 +129,15 @@ public class PlayerManager implements Listener {
 			p.getInventory().setItem(7, new NamedStack(ChatColor.AQUA+"[Ability Shop]", Material.INK_SACK, 1, (byte)6));
 			p.getInventory().setItem(6, new NamedStack(ChatColor.AQUA+"[Select Abilties]", Material.CLAY_BALL));
 			
+//			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+//
+//				@Override
+//				public void run() {
+//					p.teleport(plugin.arena.getSpawn().getWorld().getSpawnLocation());
+//				}
+//				
+//			}, 2);
+			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
 
 				@Override
@@ -136,7 +145,7 @@ public class PlayerManager implements Listener {
 					p.teleport(plugin.arena.getSpawn());
 				}
 				
-			}, 2);
+			}, 5);
 		}
 	}
 	

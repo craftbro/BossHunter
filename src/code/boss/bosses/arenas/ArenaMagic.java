@@ -9,7 +9,7 @@ import code.boss.main.main;
 public class ArenaMagic extends Arena{
 
 	public ArenaMagic(main instance) {
-		super(instance, new BossMagic(instance), new Location(Bukkit.getWorld("BOSSworld"), 78, 78.5, 211));
+		super(instance, new BossMagic(instance), new Location(Bukkit.getWorld("BOSS"), 78, 78.5, 211));
 	}
 
 }

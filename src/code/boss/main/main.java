@@ -66,11 +66,15 @@ public class main extends JavaPlugin implements Listener{
 			}
 			
 		}, 5, 1);
+		
+		arena.setup();
 	}
 	
 	@Override
 	public void onDisable(){
 		shutdown();
+		
+		Bukkit.unloadWorld("BOSS", false);
 	}
 	
 	@Override
@@ -136,8 +140,12 @@ public class main extends JavaPlugin implements Listener{
 		shop = new Shop(this);
 		
 		util.copyWorld();
+		
 		Bukkit.createWorld(new WorldCreator("worldB"));
+		
 		arena = new ArenaGolem(this);
+		
+		
 
 		log.info("Bossfight Launched!");
 	}

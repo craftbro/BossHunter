@@ -294,7 +294,10 @@ public void addLore(ItemStack a, List<String> s){
 		File folder = new File("worldB");
 		File n = new File("BOSS");
 		
-
+		if(n.exists()){
+			deleteFolder(n);
+			System.out.print("MEHEHEHEHEHHEHEH");
+		}
 		
 		if(!n.exists()){
 			n.mkdir();

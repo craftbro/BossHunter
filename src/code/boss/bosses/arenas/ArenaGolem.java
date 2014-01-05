@@ -11,7 +11,12 @@ import code.boss.main.main;
 public class ArenaGolem extends Arena{
 
 	public ArenaGolem(main instance) {
-		super(instance, new BossGolem(instance), new Location(Bukkit.getWorld("BOSSworld"), 78, 76, 211));
+		super(instance, new BossGolem(instance));
+	}
+	
+	@Override
+	public void setup(){
+		this.spawn =  new Location(Bukkit.getWorld("BOSS"), 78, 76, 211);
 	}
 
 }
