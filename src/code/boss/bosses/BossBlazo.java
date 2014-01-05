@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockIgniteEvent;
@@ -29,6 +30,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,6 +38,7 @@ import org.bukkit.util.Vector;
 
 import code.boss.effect.ParticleEffect;
 import code.boss.effect.ras.RasEffect;
+import code.boss.item.NamedStack;
 import code.boss.main.main;
 
 /**
@@ -43,9 +46,9 @@ import code.boss.main.main;
  * Please find a better name.....
  * @author rasmusrune
  */
-public class BossUnnamed extends Boss{
+public class BossBlazo extends Boss{
 	public List<Entity> charging = new ArrayList<Entity>();
-	public static long timer = 0;
+	public static int timer = 0;
 	static int attacks = 0;
 	public String bossName = "Blazo";
 	public String u_v = ChatColor.BLACK + "[" + ChatColor.DARK_GRAY + "???" + ChatColor.BLACK + "] " + ChatColor.GRAY;
@@ -53,21 +56,35 @@ public class BossUnnamed extends Boss{
 	
 	Random r = new Random();
 	
-	public BossUnnamed(main m){
+	public BossBlazo(main m){
 		super(m);
 	}
 
 	
 	public void start(){
 		timer = 0;
-		boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(new Location(Bukkit.getWorld("world"), 199, 199, 199), EntityType.BLAZE);
-		boss.setCustomName(ChatColor.RED + bossName);
-		boss.setCustomNameVisible(true);
-		boss.setMaxHealth(450);
-		boss.setHealth(450);
-		boss.setRemoveWhenFarAway(false);
-		spawned = true;
-		attacks = 1;
+		plugin.util.broadcastDelaySound(u_v + "Get away from my house " + plugin.util.randomName() + "! And take all your friends with you!", Sound.AMBIENCE_THUNDER, 1, timer += 60);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Your house?? Its mine!", Sound.VILLAGER_HIT, 1, timer += 70);
+		plugin.util.broadcastDelaySound(u_v + "Its MY house and i have MY power to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 80);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Its my house and you stole it! Come down so i can fight you", Sound.VILLAGER_NO, 1, timer += 60);
+		plugin.util.broadcastDelaySound(u_v + "I am....", Sound.AMBIENCE_THUNDER, 1, timer += 90);
+		plugin.util.broadcastDelaySound(b_v + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Give me my house back now or prepair to die", Sound.VILLAGER_NO, 1, timer += 70);
+		plugin.util.broadcastDelaySound(b_v + "If you really wish to get squashed...", Sound.AMBIENCE_THUNDER, 1, timer += 75);
+		new BukkitRunnable(){
+			public void run(){
+				boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(new Location(Bukkit.getWorld("world"), 199, 199, 199), EntityType.BLAZE);
+				boss.setCustomName(ChatColor.RED + bossName);
+				boss.setCustomNameVisible(true);
+				boss.setMaxHealth(450);
+				boss.setHealth(450);
+				boss.setRemoveWhenFarAway(false);
+				spawned = true;
+				attacks = 1;
+			}
+		}.runTaskLater(plugin, timer += 70);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Hey thats unfair! You fly", Sound.VILLAGER_NO, 1, timer += 140);
+		plugin.util.broadcastDelaySound(b_v + "Its your own fault! I gave you a chance to flee", Sound.AMBIENCE_THUNDER, 1, timer += 80);
 	}
 	
 	
@@ -110,11 +127,41 @@ public class BossUnnamed extends Boss{
 	}
 	
 	
+	public static boolean optimized1 = false;
+	public static boolean optimized2 = false;
+	public static boolean optimized3 = false;
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		if (charging.contains(event.getEntity())){
 			event.setCancelled(true);
+		}
+		if (event.getEntity().getUniqueId() == boss.getUniqueId()){
+			if (boss.getHealth() / 4.5 <= 70 && !optimized1){
+				optimized1 = true;
+				attacks = 2;
+			}
+			if (boss.getHealth() / 4.5 <= 50 && !optimized2){
+				optimized2 = true;
+				attacks = 3;
+				timer = 0;
+				plugin.util.broadcastDelaySound(b_v + "I tried to go easy on you. But you like nearly ask me to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 40);
+			}
+			if (boss.getHealth() / 4.5 <= 30 && !optimized3){
+				optimized3 = true;
+				attacks = 4;
+				timer = 0;
+				plugin.util.broadcastDelaySound(b_v + "Why are you even trying to take my house? We could be friends!", Sound.AMBIENCE_THUNDER, 1, timer += 20);
+				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "MY house you mean!", Sound.VILLAGER_NO, 1, timer += 70);
+				plugin.util.broadcastDelaySound(b_v + "I will never give my house away! Give up already", Sound.AMBIENCE_THUNDER, 1, timer += 60);
+				new BukkitRunnable(){
+					public void run(){
+						if (!charging.contains(boss)){
+							bullscharge(boss, plugin.util.getNearest(boss));
+						}
+					}
+				}.runTaskLater(plugin, timer += 10);
+			}
 		}
 	}
 	
@@ -130,11 +177,29 @@ public class BossUnnamed extends Boss{
 		}
 		if (event.getEntity().getUniqueId() == boss.getUniqueId()){
 			spawned = false;
+			timer = 0;
+			plugin.util.broadcastDelaySound(b_v + "I give up. Just take my house!", Sound.AMBIENCE_THUNDER, 1, timer += 70);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We are not taking your house we are taking our house back!", Sound.VILLAGER_NO, 1, timer += 60);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "If your so sure its your house then give us a proof!", Sound.VILLAGER_YES, 1, timer += 65);
+			plugin.util.broadcastDelaySound(b_v + "ok if you want a proof i will give you one. Heres my photobook", Sound.AMBIENCE_THUNDER, 1, timer += 70);
+			new BukkitRunnable(){
+				public void run(){
+					for (Player online : Bukkit.getOnlinePlayers()){
+						PlayerInventory inv = online.getInventory();
+						inv.addItem(new NamedStack(ChatColor.RED + bossName + "'s Photo Book", Material.BOOK));
+					}
+				}
+			}.runTaskLater(plugin, timer += 20);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Wow its actually true! It is his house!", Sound.VILLAGER_HIT, 1, timer += 100);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Well erhmm... sorry for the inconvenience. I hope you wont squash us because of it", Sound.VILLAGER_IDLE, 1, timer += 60);
+			plugin.util.broadcastDelaySound(b_v + "We could have been friends...", Sound.AMBIENCE_THUNDER, 1, timer += 50);
+			plugin.util.broadcastDelaySound(ChatColor.YELLOW + "New Friend request from: " + ChatColor.RED + bossName, Sound.LEVEL_UP, 1, timer += 70);
+			plugin.util.broadcastDelaySound(ChatColor.GREEN + "Friend request accepted", Sound.LEVEL_UP, 1, timer += 90);
 			new BukkitRunnable(){
 				public void run(){
 					plugin.stop();
 				}
-			}.runTaskLater(plugin, timer += 100);
+			}.runTaskLater(plugin, timer += 60);
 		}
 	}
 	

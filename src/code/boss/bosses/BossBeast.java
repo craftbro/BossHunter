@@ -144,7 +144,7 @@ public class BossBeast extends Boss implements Listener{
 			for (ItemStack armor : boss.getEquipment().getArmorContents()){
 				armor.setDurability((short) 0);
 			}
-			if (boss.getHealth() / 6.5 == 70 && !optimized1){
+			if (boss.getHealth() / 6.5 <= 70 && !optimized1){
 				optimized1 = true;
 				spawned = false;
 				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Was that really what you was that scared of? Now show yourself!", Sound.VILLAGER_YES, 1, 0);
@@ -179,11 +179,11 @@ public class BossBeast extends Boss implements Listener{
 					}
 				}.runTaskLater(plugin, 140);
 			}
-			if (boss.getHealth() / 6.5 == 50 && !optimized2){
+			if (boss.getHealth() / 6.5 <= 50 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (boss.getHealth() / 6.5 == 30 && !optimized3){
+			if (boss.getHealth() / 6.5 <= 30 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 			}
