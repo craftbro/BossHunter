@@ -9,6 +9,8 @@ import code.boss.main.main;
 
 public class Boss{
 
+	//basic boss class
+	
     public LivingEntity boss = null;
 	protected main plugin;
 	protected boolean spawned = false;
