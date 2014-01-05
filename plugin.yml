@@ -1,0 +1,14 @@
+name: Bossfight
+main: code.boss.main.main
+author: theCodeBro
+version: 1
+depends: [BarAPI]
+depends: [ConfigAPI]
+depends: [Vault]
+commands:
+  start:
+  head:
+  stats:
+  exp:
+  level:
+ 
