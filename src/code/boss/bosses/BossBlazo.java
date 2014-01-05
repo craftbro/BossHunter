@@ -67,6 +67,7 @@ public class BossBlazo extends Boss{
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Your house?? Its mine!", Sound.VILLAGER_HIT, 1, timer += 70);
 		plugin.util.broadcastDelaySound(u_v + "Its MY house and i have MY power to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 80);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Its my house and you stole it! Come down so i can fight you", Sound.VILLAGER_NO, 1, timer += 60);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "And tell me Who are You!", Sound.VILLAGER_NO, 1, timer += 50);
 		plugin.util.broadcastDelaySound(u_v + "I am....", Sound.AMBIENCE_THUNDER, 1, timer += 90);
 		plugin.util.broadcastDelaySound(b_v + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Give me my house back now or prepair to die", Sound.VILLAGER_NO, 1, timer += 70);
