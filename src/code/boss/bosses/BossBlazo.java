@@ -73,7 +73,7 @@ public class BossBlazo extends Boss{
 		plugin.util.broadcastDelaySound(b_v + "If you really wish to get squashed...", Sound.AMBIENCE_THUNDER, 1, timer += 75);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(new Location(Bukkit.getWorld("world"), 199, 199, 199), EntityType.BLAZE);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("world"), -369, 62.5, -8), EntityType.BLAZE);
 				boss.setCustomName(ChatColor.RED + bossName);
 				boss.setCustomNameVisible(true);
 				boss.setMaxHealth(450);

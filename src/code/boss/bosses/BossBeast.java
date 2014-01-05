@@ -78,7 +78,7 @@ public class BossBeast extends Boss implements Listener{
 		plugin.util.broadcastDelaySound(u_v + "Now its too late! Its here", Sound.ENDERDRAGON_GROWL, 1, timer += 65);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(randomPlayer().getEyeLocation(), EntityType.ZOMBIE);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getEyeLocation(), EntityType.ZOMBIE);
 				boss.setMaxHealth(650);
 				boss.setHealth(650);
 				boss.setCustomName(ChatColor.DARK_GREEN + "Beast");
