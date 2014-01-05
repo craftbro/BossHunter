@@ -99,7 +99,7 @@ public class BossMagic extends Boss implements Listener{
 		plugin.util.broadcastDelaySound(r_b + "There's some magical aura nearby", Sound.DONKEY_IDLE, 1, timer += 60);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(new Location(Bukkit.getWorld("world"), 101, 98, 198), EntityType.WITCH);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("world"), 101, 98, 198), EntityType.WITCH);
 				boss.setMaxHealth(250);
 				boss.setHealth(250);
 				boss.setCustomName(ChatColor.LIGHT_PURPLE + "Magical Queen");
