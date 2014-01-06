@@ -370,7 +370,7 @@ public class BossMagic extends Boss implements Listener{
 			} else if (rEffect == 1){
 				potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160, 0));
 			} else if (rEffect == 2){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, -6));
+				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, 99));
 			} else if (rEffect == 3){
 				potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140, 2));
 			}
@@ -501,7 +501,7 @@ public class BossMagic extends Boss implements Listener{
 				if (rEffect2 == 0){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0));
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, -6));
+					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
 				} else if (rEffect2 == 2){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2));
 				}
@@ -510,12 +510,12 @@ public class BossMagic extends Boss implements Listener{
 				if (rEffect2 == 0){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0));
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, -6));
+					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
 				} else if (rEffect2 == 2){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2));
 				}
 			} else if (rEffect1 == 2){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, -6));
+				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, 99));
 				if (rEffect2 == 0){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0));
 				} else if (rEffect2 == 1){
@@ -530,7 +530,7 @@ public class BossMagic extends Boss implements Listener{
 				} else if (rEffect2 == 1){
 					potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0));
 				} else if (rEffect2 == 2){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, -6));
+					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
 				}
 			}
 			Vector vec = target.getLocation().toVector().subtract(shooter.getLocation().toVector());

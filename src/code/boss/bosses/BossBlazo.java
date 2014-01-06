@@ -194,8 +194,8 @@ public class BossBlazo extends Boss{
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Wow its actually true! It is his house!", Sound.VILLAGER_HIT, 1, timer += 100);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Well erhmm... sorry for the inconvenience. I hope you wont squash us because of it", Sound.VILLAGER_IDLE, 1, timer += 60);
 			plugin.util.broadcastDelaySound(b_v + "We could have been friends...", Sound.AMBIENCE_THUNDER, 1, timer += 50);
-			plugin.util.broadcastDelaySound(ChatColor.YELLOW + "New Friend request from: " + ChatColor.RED + bossName, Sound.LEVEL_UP, 1, timer += 70);
-			plugin.util.broadcastDelaySound(ChatColor.GREEN + "Friend request accepted", Sound.LEVEL_UP, 1, timer += 90);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "why cant we still be friends?", Sound.VILLAGER_YES, 1, timer += 70);
+			plugin.util.broadcastDelaySound(b_v + "Your right! lets be friends", Sound.AMBIENCE_THUNDER, 1, timer += 90);
 			new BukkitRunnable(){
 				public void run(){
 					plugin.stop();

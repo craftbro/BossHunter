@@ -11,8 +11,12 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -66,6 +70,10 @@ public class BossArcher extends Boss{
 				boss.setCustomName(ChatColor.GREEN + "Archer King");
 				boss.setCustomNameVisible(true);
 				boss.setRemoveWhenFarAway(false);
+				boss.setMaxHealth(600);
+				boss.setHealth(600);
+				spawned = true;
+				attacks = 1;
 			}
 		}.runTaskLater(plugin, timer += 70);
 	}
@@ -151,6 +159,8 @@ public class BossArcher extends Boss{
 		if (damager.getPassenger().getType() == EntityType.DROPPED_ITEM && damager.getType() == EntityType.ARROW){
 			if (entity instanceof LivingEntity){
 				if (((Item) damager.getPassenger()).getItemStack().getType() == Material.ICE){
+					entity.getWorld().playSound(entity.getLocation(), Sound.SKELETON_HURT, 2, 0);
+					entity.getWorld().playEffect(((LivingEntity) entity).getEyeLocation(), Effect.STEP_SOUND, Material.ICE);
 					((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 190, 2));
 				} else if (((Item) damager.getPassenger()).getItemStack().getType() == Material.SPIDER_EYE){
 					((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 80, 1));
@@ -167,6 +177,7 @@ public class BossArcher extends Boss{
 	public void onEntityDeath(EntityDeathEvent event){
 		Entity entity = event.getEntity();
 		if (entity.getUniqueId() == boss.getUniqueId()){
+			spawned = false;
 			final Location loc = boss.getLocation();
 			loc.setY(loc.getY() + 1);
 			loc.setPitch(-3);
