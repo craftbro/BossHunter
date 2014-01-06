@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -22,6 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -33,21 +35,22 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import code.boss.effect.ParticleEffect;
 import code.boss.item.ColoredStack;
 import code.boss.main.main;
 
 /**
  * The class of the boss "Archer King"
- * Please find a better name.....
  * @author rasmusrune
  */
+//TODO add more talkingness
 public class BossArcher extends Boss{
 	public List<Entity> charging = new ArrayList<Entity>();
 	public static int timer = 0;
 	static int attacks = 0;
 	public String bossName = "Archer King";
 	public String u_v = ChatColor.BLACK + "[" + ChatColor.DARK_GRAY + "???" + ChatColor.BLACK + "] " + ChatColor.GRAY;
-	public String s_v = ChatColor.DARK_RED + "[" + ChatColor.RED + bossName + ChatColor.DARK_RED + "] " + ChatColor.GOLD;
+	public String a_v = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_GREEN + bossName + ChatColor.DARK_GRAY + "] " + ChatColor.GREEN;
 	
 	Random r = new Random();
 	
@@ -58,6 +61,36 @@ public class BossArcher extends Boss{
 	
 	public void start(){
 		timer = 0;
+		new BukkitRunnable(){
+			public void run(){
+				for (Player online : Bukkit.getOnlinePlayers()){
+					online.getWorld().playSound(online.getLocation(), Sound.ARROW_HIT, 1, 1);
+					online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999999, 2));
+					online.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999999, 9));
+					online.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999999, 99));
+				}
+			}
+		}.runTaskLater(plugin, timer += 80);
+		plugin.util.broadcastDelaySound(u_v + "i hate when i dont hit perfectly. Now you arnt blind!", Sound.BLAZE_BREATH, 1, timer += 80);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Wait why would you make me blind??", Sound.VILLAGER_HIT, 1, timer += 70);
+		plugin.util.broadcastDelaySound(u_v + "Im hungry so i need meat! stand still so i can shoot you!", Sound.BLAZE_BREATH, 1, timer += 90);
+		new BukkitRunnable(){
+			public void run(){
+				for (Player online : Bukkit.getOnlinePlayers()){
+					online.getWorld().playSound(online.getLocation(), Sound.ARROW_HIT, 1, 1);
+					online.setHealth(1);
+					online.removePotionEffect(PotionEffectType.BLINDNESS);
+					online.removePotionEffect(PotionEffectType.SLOW);
+					online.removePotionEffect(PotionEffectType.JUMP);
+				}
+			}
+		}.runTaskLater(plugin, timer += 60);
+		plugin.util.broadcastDelaySound(u_v + "I hate this! Why did i foget to sharpen my arrows??", Sound.BLAZE_BREATH, 1, timer += 70);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "But if you kill us we will die!", Sound.VILLAGER_HIT, 1, timer += 70);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Who are you even?", Sound.VILLAGER_NO, 1, timer += 80);
+		plugin.util.broadcastDelaySound(a_v + "The Archer King! Well now stand still", Sound.BLAZE_BREATH, 1, timer += 60);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Come down and fight us if you want to kill us!", Sound.VILLAGER_NO, 1, timer += 70);
+		plugin.util.broadcastDelaySound(a_v + "I will come down and fight you but only to train my archer skills", Sound.BLAZE_BREATH, 1, timer += 75);
 		new BukkitRunnable(){
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 99, 65, 99), EntityType.SKELETON);
@@ -163,6 +196,8 @@ public class BossArcher extends Boss{
 					entity.getWorld().playEffect(((LivingEntity) entity).getEyeLocation(), Effect.STEP_SOUND, Material.ICE);
 					((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 190, 2));
 				} else if (((Item) damager.getPassenger()).getItemStack().getType() == Material.SPIDER_EYE){
+					entity.getWorld().playSound(entity.getLocation(), Sound.ZOMBIE_REMEDY, 4, 2);
+					ParticleEffect.SLIME.animateAtLocation(entity.getLocation(), 36, 1);
 					((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 80, 1));
 				} else if (((Item) damager.getPassenger()).getItemStack().getType() == Material.SPIDER_EYE){
 					damager.getWorld().createExplosion(damager.getLocation().getX(), damager.getLocation().getY(), damager.getLocation().getZ(), 2.5F, false, false);
@@ -178,6 +213,7 @@ public class BossArcher extends Boss{
 		Entity entity = event.getEntity();
 		if (entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
+			timer = 0;
 			final Location loc = boss.getLocation();
 			loc.setY(loc.getY() + 1);
 			loc.setPitch(-3);
