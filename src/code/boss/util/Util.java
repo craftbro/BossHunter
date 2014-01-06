@@ -44,21 +44,20 @@ public class Util {
 		plugin = instance;
 	}
 	
+	   /**Gives a random player's name
+		 * 
+		 * @return a random player's name
+		 * 
+		 * */
 	public String randomName(){
-		String s = null;
-		
-		while(s  == null){
-		for(Player p : Bukkit.getOnlinePlayers()){
-			if(new Random().nextInt(Bukkit.getOnlinePlayers().length) == 0){
-				s = p.getName();
-				break;
-			}
-		}
-		}
-		
-		return s;
+		return Bukkit.getOnlinePlayers()[new Random().nextInt(Bukkit.getOnlinePlayers().length)].getName();
 	}
 	
+	/**Sets the target of any living entity to the nearest player
+	 * 
+	 * @param e the living entity
+	 * 
+	 * */
 	public void setTargetToNearest(LivingEntity e){
 		Player p = getNearest(e);
 		
@@ -69,6 +68,14 @@ public class Util {
 		}
 	}
 	
+	/**Gives a player exp AND money
+	 * 
+	 * @param p the player
+	 * @param xp the amount of xp
+	 * @param money the amount of money
+	 * @param why the reason why (this will display: "+10 XP and +10 Coins for (why)")
+	 * 
+	 * */
 	public void giveExpAndMoney(Player p, int xp, int money, String why){
 		plugin.level.giveExp(p, xp, null);
 		plugin.eco.giveMoney(p, money);		
@@ -76,6 +83,11 @@ public class Util {
 		 p.playSound(p.getEyeLocation(), Sound.CHICKEN_EGG_POP, 100, 1);
 	}
 	
+	/**Changes a String so it will apear in the middle of the chat
+	 * 
+	 * @param s the string to be modified
+	 * 
+	 * */
 	public String middleOfset(String s){
 		int i = 32;
 	
@@ -92,6 +104,11 @@ public class Util {
 		
 	}
 	
+	/**Gets the nearest player to that entity
+	 * 
+	 * @param e the entity
+	 * 
+	 * */
 	public Player getNearest(Entity e){
 		Player p = null;
 		
@@ -107,6 +124,12 @@ public class Util {
 		return p;
 	}
 
+	/**Adds a lore to an itemstack, please note that this will clear the arraylist
+	 * 
+	 * @param a the itemstack	
+	 * @param s the lore to be added (this arraylist will bet cleared)
+	 * 
+	 * */
 public void addLore(ItemStack a, List<String> s){
 		
 		
@@ -147,7 +170,11 @@ public void addLore(ItemStack a, List<String> s){
 		
 	}
 
- 
+/**Makes a block fall and reappear after 4 seconds
+ * 
+ * @param b the block
+ * 
+ * */
      public void fall(final Block b){
     	final Entity f = b.getWorld().spawnFallingBlock(b.getLocation(), b.getTypeId(), b.getData());
     	 final Material m = b.getType();
@@ -169,7 +196,12 @@ public void addLore(ItemStack a, List<String> s){
     		 
     	 }, 80);
      }
-
+     /**Heals an living entity. This deals with the heal-gets-to-much issue
+ 	 * 
+ 	 * @param e the entity to heal
+ 	 * @param heal the amount to heal
+ 	 * 
+ 	 * */
     public void heal(LivingEntity e, int heal){
     	if(e.getHealth()+heal <= e.getMaxHealth()){
     		e.setHealth(e.getHealth()+heal);
@@ -178,6 +210,14 @@ public void addLore(ItemStack a, List<String> s){
     	}
     }
     
+    /**Draws a line from 1 location to another, and executes a runnable when completed
+	 * 
+	 * @param from the location where the line starts
+	 * @param to the location the lin ends
+	 * @param eff the effect that is played every time the line advances
+	 * @param run the runnable that gets executed when 'to' is reached
+	 * 
+	 * */
     public void lineRunnable(final Location from, final Location to, final ParticleEffect eff, final Runnable run){
     	
     	
@@ -213,7 +253,13 @@ public void addLore(ItemStack a, List<String> s){
     	}.runTaskTimer(plugin, 0, 1);
     }
 
-	
+    /**Draws a line from 1 location to another
+	 * 
+	 * @param from the location where the line starts
+	 * @param to the location the lin ends
+	 * @param eff the effect that is played every time the line advances
+	 * 
+	 * */
    public void line(final Location from, final Location to, final ParticleEffect eff){
 	
 	
@@ -245,7 +291,12 @@ public void addLore(ItemStack a, List<String> s){
 		
 	}.runTaskTimer(plugin, 0, 1);
 }
-   
+   /**Copies a folder and everything in it
+	 * 
+	 * @param src the folder to copy
+	 * @param dest the file to copy it to
+	 * 
+	 * */
    public static void copyFolder(File src, File dest)
 	        throws IOException{
 	 
@@ -290,6 +341,9 @@ public void addLore(ItemStack a, List<String> s){
 	        }
 	    }
 	 
+   /**Copies over worldB to BOSS
+	 * 
+	 * */
    public World copyWorld(){
 		File folder = new File("worldB");
 		File n = new File("BOSS");
@@ -325,6 +379,11 @@ public void addLore(ItemStack a, List<String> s){
 		
 	}
 
+   /**Deletes a folder
+	 * 
+	 * @param folder folder to delete
+	 * 
+	 * */
 	public static void deleteFolder(File folder) {
 	    File[] files = folder.listFiles(); // get Files
 	    if(files!=null) { //some JVMs return null for empty dirs
@@ -339,6 +398,11 @@ public void addLore(ItemStack a, List<String> s){
 	 //   folder.delete(); // delete Folder
 	}
    
+    /**Gives a random player's name in a fancy format
+	 * 
+	 * @return a random player's name in a fancy format
+	 * 
+	 * */
 	public String randomNameFormat(){
 		return ChatColor.GOLD+"["+ChatColor.DARK_GREEN+randomName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW;
 	}
@@ -352,7 +416,13 @@ public void addLore(ItemStack a, List<String> s){
 		}
 	}
 	
-	
+	   /**Broadcast's a message and a sound on delay
+		 * 
+		 * @param m the message to broadcast
+		 * @param s the soudn to broadcast
+		 * @param pi the pitch for the sound
+		 * @param d the delay
+		 * */
 	public void broadcastDelaySound(final String m, final Sound s, final int pi, int d){
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
 
