@@ -31,6 +31,7 @@ public class Arena {
 	
 	public void start(){
 		boss.start();
+		plugin.pm.start();
 	}
 	
 	public Boss getBoss(){

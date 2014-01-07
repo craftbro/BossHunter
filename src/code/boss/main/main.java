@@ -26,6 +26,7 @@ import code.boss.item.SkullStack;
 import code.boss.player.PlayerManager;
 import code.boss.player.eco.Eco;
 import code.boss.player.eco.abilities.Shop;
+import code.boss.player.eco.collect.Collect;
 import code.boss.player.level.Level;
 import code.boss.util.Util;
 import code.configtesting.config.Config;
@@ -44,6 +45,7 @@ public class main extends JavaPlugin implements Listener{
 	public Level level;
 	public Eco eco;
 	public Shop shop;
+	public Collect collect;
 	
 	final List<Arena> arenas = new ArrayList<Arena>();
 	
@@ -109,6 +111,10 @@ public class main extends JavaPlugin implements Listener{
 					shutdown();
 				}else if(cmd.equalsIgnoreCase("warpworld")){
 					p.teleport(new Location(Bukkit.getWorld(args[0]), p.getLocation().getX(), p.getLocation().getY()+1, p.getLocation().getZ()));
+				}else if(cmd.equalsIgnoreCase("additem")){
+					collect.giveItem(p, p.getItemInHand());
+				}else if(cmd.equalsIgnoreCase("collection")){
+					collect.loadInventory(p);
 				}
 		}
 		
@@ -138,6 +144,7 @@ public class main extends JavaPlugin implements Listener{
 		level = new Level(this);
 		eco = new Eco(this);
 		shop = new Shop(this);
+		collect = new Collect(this);
 		
 		util.copyWorld();
 		

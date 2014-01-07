@@ -19,20 +19,22 @@ public class Shop {
 
 	main plugin;
 	
-	int abs = 2;
+	int abs = 3;
 	
 	List<ItemStack> abils = new ArrayList<ItemStack>();
 
 	ItemStack heal = new NamedStack(ChatColor.LIGHT_PURPLE+"Heal", Material.MAGMA_CREAM);
 	ItemStack power = new NamedStack(ChatColor.YELLOW+"Boost", Material.BLAZE_ROD);
+	ItemStack speed = new NamedStack(ChatColor.WHITE+"Swift", Material.FEATHER);
 	
 	
 	
 	public Shop(main instance){
 		plugin = instance;
 		
-		abils.add(power);
 		abils.add(heal);
+		abils.add(speed);
+		abils.add(power);
 	}
 	
 	public void openMenu(Player p){
@@ -193,6 +195,8 @@ public class Shop {
 			return new AbilityHeal(p, l);
 		}else if(s.contentEquals("boost")){
 			return new AbilityStrenght(p, l);
+		}else if(s.contentEquals("swift")){
+			return new AbilitySpeed(p, l);
 		}else{
 			return null;
 		}

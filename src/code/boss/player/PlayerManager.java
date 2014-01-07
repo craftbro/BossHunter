@@ -128,6 +128,7 @@ public class PlayerManager implements Listener {
 			p.getInventory().setItem(8, new NamedStack(ChatColor.AQUA+"[Upgrade Stats]", Material.NETHER_STAR));
 			p.getInventory().setItem(7, new NamedStack(ChatColor.AQUA+"[Ability Shop]", Material.INK_SACK, 1, (byte)6));
 			p.getInventory().setItem(6, new NamedStack(ChatColor.AQUA+"[Select Abilties]", Material.CLAY_BALL));
+			p.getInventory().setItem(5, new NamedStack(ChatColor.AQUA+"[View Collection]", Material.CHEST));
 			
 //			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
 //
@@ -175,7 +176,10 @@ public class PlayerManager implements Listener {
 			plugin.shop.openMenu(event.getPlayer());
 		}else if(event.getPlayer().getItemInHand().getType() == Material.CLAY_BALL){
 			plugin.shop.openSelect(event.getPlayer());
+		}else if(event.getPlayer().getItemInHand().getType() == Material.CHEST){
+			plugin.collect.loadInventory(p);
 		}
+		event.setCancelled(true);
 		}else{
 			int held = event.getPlayer().getInventory().getHeldItemSlot();
 			
@@ -183,6 +187,17 @@ public class PlayerManager implements Listener {
 				if(p.getExp() >= 1 && plugin.shop.getAbility(p.getItemInHand(), p).use() ){
 					p.setExp(0);					
 				}
+			}
+		}
+	}
+	
+	public void start(){
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(p.getGameMode() != GameMode.CREATIVE){
+				p.getInventory().setItem(8, new ItemStack(Material.AIR));
+				p.getInventory().setItem(7, new ItemStack(Material.AIR));
+				p.getInventory().setItem(6, new ItemStack(Material.AIR));
+				p.getInventory().setItem(5, new ItemStack(Material.AIR));
 			}
 		}
 	}
