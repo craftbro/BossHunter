@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -16,8 +15,6 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -43,7 +40,6 @@ import code.boss.main.main;
  * The class of the boss "Archer King"
  * @author rasmusrune
  */
-//TODO add more talkingness
 public class BossArcher extends Boss{
 	public List<Entity> charging = new ArrayList<Entity>();
 	public static int timer = 0;
@@ -244,7 +240,20 @@ public class BossArcher extends Boss{
 						}.runTaskLater(plugin, 200);
 					}
 				}
-			}.runTaskLater(plugin, 100);
+			}.runTaskLater(plugin, timer += 100);
+			plugin.util.broadcastDelaySound(a_v + "I really need to train some more with my bow", Sound.BLAZE_BREATH, 1, timer += 70);
+			plugin.util.broadcastDelaySound(a_v + "It just lost my lunch because i forgot to train last month", Sound.BLAZE_BREATH, 1, timer += 60);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Why cant you just eat something else than meat??", Sound.VILLAGER_IDLE, 1, timer += 80);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Think about the ones you kill to get it", Sound.VILLAGER_HAGGLE, 1, timer += 70);
+			plugin.util.broadcastDelaySound(a_v + "As far as i know you dont really think that mutch about it before you kill an animal to get stuff", Sound.BLAZE_BREATH, 1, timer += 75);
+			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Your right but just because we dont it dosnt mean you cant think about it first", Sound.VILLAGER_YES, 1, timer += 80);
+			plugin.util.broadcastDelaySound(a_v + "I will keep doing it as you do with animals and stuff and i will come back after you another day", Sound.BLAZE_BREATH, 1, timer += 65);
+			plugin.util.broadcastDelaySound(a_v + "And when i come back i will be mutch stronger and will be able to take you down", Sound.BLAZE_BREATH, 1, timer += 68);
+			new BukkitRunnable(){
+				public void run(){
+					plugin.stop();
+				}
+			}.runTaskLater(plugin, timer += 90);
 		}
 	}
 	
