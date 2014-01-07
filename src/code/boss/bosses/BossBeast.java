@@ -4,7 +4,9 @@ package code.boss.bosses;
 
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -42,9 +44,11 @@ import org.bukkit.util.Vector;
 
 
 
+
 import code.boss.effect.ParticleEffect;
 import code.boss.effect.ras.RasEffect;
 import code.boss.item.ColoredStack;
+import code.boss.item.NamedStack;
 import code.boss.main.main;
 
 /**
@@ -217,6 +221,18 @@ public class BossBeast extends Boss implements Listener{
 		} else if (entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
+			if (boss.getKiller() != null){
+				if (r.nextInt(60) == 0){
+					NamedStack potato = new NamedStack(ChatColor.GOLD + "Mutated Potato", Material.BAKED_POTATO);
+					List<String> potatoLore = new ArrayList<String>();
+					potatoLore.add("Earned when killing the boss \"Mutated Potato\"");
+					plugin.util.addLore(potato, potatoLore);
+					if (plugin.collect.hasItem(boss.getKiller(), potato)){
+						plugin.collect.giveItem(boss.getKiller(), potato);
+						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
+					}
+				}
+			}
 			plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Beast" , Sound.ENDERDRAGON_DEATH, 1, timer);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Finnaly we got that beast down! Now who are you?", Sound.VILLAGER_YES, 1, timer += 160);
 			plugin.util.broadcastDelaySound(u_v + "I am...", Sound.EAT, 1, timer += 80);

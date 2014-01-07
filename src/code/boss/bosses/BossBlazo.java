@@ -26,6 +26,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -169,6 +170,15 @@ public class BossBlazo extends Boss{
 	
 	
 	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
+		if (minions.contains(event.getDamager())){
+			event.getEntity().setFireTicks(event.getEntity().getFireTicks() + 50);
+		}
+	}
+	
+	
+	
+	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		if (minions.contains(event.getEntity())){
 			minions.remove(event.getEntity());
@@ -179,6 +189,18 @@ public class BossBlazo extends Boss{
 		if (event.getEntity().getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
+			if (boss.getKiller() != null){
+				if (r.nextInt(60) == 0){
+					NamedStack friend = new NamedStack(ChatColor.GREEN + "Friend Request", Material.PAPER);
+					List<String> friendLore = new ArrayList<String>();
+					friendLore.add("Earned when killing the boss \"" + bossName + "\"");
+					plugin.util.addLore(friend, friendLore);
+					if (plugin.collect.hasItem(boss.getKiller(), friend)){
+						plugin.collect.giveItem(boss.getKiller(), friend);
+						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Friend Request' was added to your Collection!");
+					}
+				}
+			}
 			plugin.util.broadcastDelaySound(b_v + "I give up. Just take my house!", Sound.AMBIENCE_THUNDER, 1, timer += 70);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We are not taking your house we are taking our house back!", Sound.VILLAGER_NO, 1, timer += 60);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "If your so sure its your house then give us a proof!", Sound.VILLAGER_YES, 1, timer += 65);

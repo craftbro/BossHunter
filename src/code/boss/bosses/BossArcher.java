@@ -34,6 +34,7 @@ import org.bukkit.util.Vector;
 
 import code.boss.effect.ParticleEffect;
 import code.boss.item.ColoredStack;
+import code.boss.item.NamedStack;
 import code.boss.main.main;
 
 /**
@@ -210,6 +211,18 @@ public class BossArcher extends Boss{
 		if (entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
+			if (boss.getKiller() != null){
+				if (r.nextInt(60) == 0){
+					NamedStack lunch = new NamedStack(ChatColor.RED + "Lunch Box", Material.TRAPPED_CHEST);
+					List<String> lunchLore = new ArrayList<String>();
+					lunchLore.add("Earned when killing the boss \"" + bossName + "\"");
+					plugin.util.addLore(lunch, lunchLore);
+					if (plugin.collect.hasItem(boss.getKiller(), lunch)){
+						plugin.collect.giveItem(boss.getKiller(), lunch);
+						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Lunch Box' was added to your Collection!");
+					}
+				}
+			}
 			final Location loc = boss.getLocation();
 			loc.setY(loc.getY() + 1);
 			loc.setPitch(-3);

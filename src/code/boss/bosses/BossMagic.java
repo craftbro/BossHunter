@@ -43,6 +43,7 @@ import org.bukkit.util.Vector;
 
 import code.boss.effect.ParticleEffect;
 import code.boss.effect.ras.RasEffect;
+import code.boss.item.NamedStack;
 import code.boss.item.SkullStack;
 import code.boss.main.main;
 
@@ -269,6 +270,29 @@ public class BossMagic extends Boss implements Listener{
 					//i didn't use boss.damage(damage) because it doesn't call EntityDamageEvent
 					boss.setNoDamageTicks(0);
 					boss.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 1, 1));
+					if (entity.getKiller() != null){
+						if (r.nextInt(600) == 0){
+							if (entity.getType() == EntityType.SLIME){
+								NamedStack greenOrb = new NamedStack(ChatColor.GREEN + "Green Orb", Material.SLIME_BALL);
+								List<String> redLore = new ArrayList<String>();
+								redLore.add("Earned when killing the minion \"Green Orb\"");
+								plugin.util.addLore(greenOrb, redLore);
+								if (plugin.collect.hasItem(entity.getKiller(), greenOrb)){
+									plugin.collect.giveItem(entity.getKiller(), greenOrb);
+									boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Green Orb' was added to your Collection!");
+								}
+							} else {
+								NamedStack redOrb = new NamedStack(ChatColor.RED + "Red Orb", Material.MAGMA_CREAM);
+								List<String> redLore = new ArrayList<String>();
+								redLore.add("Earned when killing the minion \"Red Orb\"");
+								plugin.util.addLore(redOrb, redLore);
+								if (plugin.collect.hasItem(entity.getKiller(), redOrb)){
+									plugin.collect.giveItem(entity.getKiller(), redOrb);
+									boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Red Orb' was added to your Collection!");
+								}
+							}
+						}
+					}
 				}
 			}
 		//} else if (entity == boss){
@@ -276,6 +300,18 @@ public class BossMagic extends Boss implements Listener{
 		} else if(entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
+			if (boss.getKiller() != null){
+				if (r.nextInt(60) == 0){
+					NamedStack wand = new NamedStack(ChatColor.LIGHT_PURPLE + "Magical Queen's Wand", Material.BLAZE_ROD);
+					List<String> wandLore = new ArrayList<String>();
+					wandLore.add("Earned when killing the boss \"Magical Queen\"");
+					plugin.util.addLore(wand, wandLore);
+					if (plugin.collect.hasItem(boss.getKiller(), wand)){
+						plugin.collect.giveItem(boss.getKiller(), wand);
+						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Magical Queen's Wand' was added to your Collection!");
+					}
+				}
+			}
 			plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Magical Queen" , Sound.ENDERDRAGON_DEATH, 1, timer);
 			plugin.util.broadcastDelaySound(r_b + "You beated it! You did it!", Sound.DONKEY_IDLE, 1, timer += 70);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Yeaa! We won! Wooooooo", Sound.VILLAGER_YES, 1, timer += 60);
@@ -283,7 +319,11 @@ public class BossMagic extends Boss implements Listener{
 			plugin.util.broadcastDelaySound(r_b + "Ahh sorry it was just some stuff from a broken potion", Sound.DONKEY_IDLE, 1, timer += 120);
 			plugin.util.broadcastDelaySound(r_b + "Well Congratulations! You won!", Sound.DONKEY_IDLE, 1, timer += 65);
 			//plugin.util.broadcastDelaySound(r_b + "Well the one who created this boss dosnt know how to stop the round soo....", Sound.DONKEY_HIT, 1, timer += 60);
-			plugin.stop();
+			new BukkitRunnable(){
+				public void run(){
+					plugin.stop();
+				}
+			}.runTaskLater(plugin, timer += 75);
 		}
 	}
 	
