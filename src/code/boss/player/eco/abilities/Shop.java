@@ -160,9 +160,18 @@ public class Shop {
 		if(p.getOpenInventory() != null && p.getOpenInventory().getTitle().contentEquals(ChatColor.BLUE+"           Ability Shop")){
 			Inventory inv = p.getOpenInventory().getTopInventory();
 			
-			ItemStack heal = inv.getItem(0);
+			int slot  = 0;
 			
-			addLore(heal, p);	
+			for(ItemStack ii : abils){
+				ItemStack i = ii.clone();
+				
+				System.out.print("ADDING: "+ii.getItemMeta().getDisplayName()+" CLONED TO: "+i.getItemMeta().getDisplayName());
+					
+				addLore(i, p);	
+				
+				inv.setItem(slot, i);
+				slot++;
+				}
 		}
 	}
 	

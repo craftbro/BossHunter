@@ -21,17 +21,19 @@ public class Collect {
 	}
 	
 
-	/**Adds an itemstack to the players collection
+	/**Adds an itemstack to the players collection. Fails if the players collection already contains the item
 	 * @param p the player who is given the item	
 	 * @param i the itemstack to be added
 	 */
 	
 	public void giveItem(Player p, ItemStack i){
+		if(!hasItem(p, i)){
 		List<ItemStack> items = getItems(p);
 		
 		items.add(i);
 		
 		Config.setData(p, "items", items);
+		}
 	}
 	
 	/**Removes an itemstack from the players collection
