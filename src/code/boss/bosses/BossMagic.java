@@ -51,7 +51,6 @@ import code.boss.main.main;
  * The class of the boss "Magical Queen"
  * @author rasmusrune
  */
-//Requesting class name change to match the new name of boss
 public class BossMagic extends Boss implements Listener{
 	public static final List<Entity> captured = new ArrayList<Entity>();
 	static int attacks = 0;
@@ -277,19 +276,15 @@ public class BossMagic extends Boss implements Listener{
 								List<String> redLore = new ArrayList<String>();
 								redLore.add("Earned when killing the minion \"Green Orb\"");
 								plugin.util.addLore(greenOrb, redLore);
-								if (plugin.collect.hasItem(entity.getKiller(), greenOrb)){
-									plugin.collect.giveItem(entity.getKiller(), greenOrb);
-									boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Green Orb' was added to your Collection!");
-								}
+								plugin.collect.giveItem(entity.getKiller(), greenOrb);
+								boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Green Orb' was added to your Collection!");
 							} else {
 								NamedStack redOrb = new NamedStack(ChatColor.RED + "Red Orb", Material.MAGMA_CREAM);
 								List<String> redLore = new ArrayList<String>();
 								redLore.add("Earned when killing the minion \"Red Orb\"");
 								plugin.util.addLore(redOrb, redLore);
-								if (plugin.collect.hasItem(entity.getKiller(), redOrb)){
-									plugin.collect.giveItem(entity.getKiller(), redOrb);
-									boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Red Orb' was added to your Collection!");
-								}
+								plugin.collect.giveItem(entity.getKiller(), redOrb);
+								boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Red Orb' was added to your Collection!");
 							}
 						}
 					}
@@ -306,10 +301,8 @@ public class BossMagic extends Boss implements Listener{
 					List<String> wandLore = new ArrayList<String>();
 					wandLore.add("Earned when killing the boss \"Magical Queen\"");
 					plugin.util.addLore(wand, wandLore);
-					if (plugin.collect.hasItem(boss.getKiller(), wand)){
-						plugin.collect.giveItem(boss.getKiller(), wand);
-						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Magical Queen's Wand' was added to your Collection!");
-					}
+					plugin.collect.giveItem(boss.getKiller(), wand);
+					boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Magical Queen's Wand' was added to your Collection!");
 				}
 			}
 			plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Magical Queen" , Sound.ENDERDRAGON_DEATH, 1, timer);

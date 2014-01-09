@@ -197,10 +197,8 @@ public class BossBlazo extends Boss implements Listener{
 					List<String> friendLore = new ArrayList<String>();
 					friendLore.add("Earned when killing the boss \"" + bossName + "\"");
 					plugin.util.addLore(friend, friendLore);
-					if (plugin.collect.hasItem(boss.getKiller(), friend)){
-						plugin.collect.giveItem(boss.getKiller(), friend);
-						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Friend Request' was added to your Collection!");
-					}
+					plugin.collect.giveItem(boss.getKiller(), friend);
+					boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Friend Request' was added to your Collection!");
 				}
 			}
 			plugin.util.broadcastDelaySound(b_v + "I give up. Just take my house!", Sound.AMBIENCE_THUNDER, 1, timer += 70);

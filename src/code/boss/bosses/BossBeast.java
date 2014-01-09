@@ -228,10 +228,8 @@ public class BossBeast extends Boss implements Listener{
 					List<String> potatoLore = new ArrayList<String>();
 					potatoLore.add("Earned when killing the boss \"Mutated Potato\"");
 					plugin.util.addLore(potato, potatoLore);
-					if (plugin.collect.hasItem(boss.getKiller(), potato)){
-						plugin.collect.giveItem(boss.getKiller(), potato);
-						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
-					}
+					plugin.collect.giveItem(boss.getKiller(), potato);
+					boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
 				}
 			}
 			plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Beast" , Sound.ENDERDRAGON_DEATH, 1, timer);

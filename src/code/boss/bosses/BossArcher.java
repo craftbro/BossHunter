@@ -219,10 +219,8 @@ public class BossArcher extends Boss implements Listener{
 					List<String> lunchLore = new ArrayList<String>();
 					lunchLore.add("Earned when killing the boss \"" + bossName + "\"");
 					plugin.util.addLore(lunch, lunchLore);
-					if (plugin.collect.hasItem(boss.getKiller(), lunch)){
-						plugin.collect.giveItem(boss.getKiller(), lunch);
-						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Lunch Box' was added to your Collection!");
-					}
+					plugin.collect.giveItem(boss.getKiller(), lunch);
+					boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Lunch Box' was added to your Collection!");
 				}
 			}
 			final Location loc = boss.getLocation();
