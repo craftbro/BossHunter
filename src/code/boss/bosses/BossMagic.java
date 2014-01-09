@@ -128,9 +128,11 @@ public class BossMagic extends Boss implements Listener{
 		}
 		if (spawned){
 			if (attacks >= 1){
-				if (r.nextInt(180) == 0){
-					for (int x = r.nextInt(6) + 5; x > 0; x--){
-						minions(boss.getLocation());
+				if (r.nextInt(170) == 0){
+					if (minions.size() < 10){
+						for (int x = r.nextInt(6) + 5; x > 0; x--){
+							minions(boss.getLocation());
+						}
 					}
 				}
 				if (r.nextInt(100) == 0){
@@ -243,7 +245,7 @@ public class BossMagic extends Boss implements Listener{
 				event.setCancelled(true);
 			}
 		} else if (entity.getType() == EntityType.SLIME || entity.getType() == EntityType.MAGMA_CUBE){
-			if (event.getCause() == DamageCause.ENTITY_ATTACK){
+			if (event.getCause() != DamageCause.ENTITY_ATTACK){
 				event.setCancelled(true);
 			}
 		}
@@ -357,38 +359,32 @@ public class BossMagic extends Boss implements Listener{
 	
 	
 	public void minions(Location loc){
-		if (spawned){
-			if (minions.size() < 25){
-				for (int x = r.nextInt(6) + 5; x > 0; x--){
-					if (r.nextBoolean()){
-						Slime sCube = Bukkit.getWorld("world").spawn(loc, Slime.class);
-						sCube.setMaximumNoDamageTicks(r.nextInt(20) + 1);
-						sCube.setNoDamageTicks(sCube.getMaximumNoDamageTicks());
-						sCube.setCustomName(ChatColor.GREEN + "Green Orb");
-						sCube.setCustomNameVisible(true);
-						if (r.nextInt(3) >= 1){
-							sCube.setSize(1);
-						} else {
-							sCube.setSize(r.nextInt(3) + 1);
-						}
-						sCube.setRemoveWhenFarAway(false);
-						minions.add(sCube);
-					} else {
-						MagmaCube mCube = Bukkit.getWorld("world").spawn(loc, MagmaCube.class);
-						mCube.setMaximumNoDamageTicks(r.nextInt(20) + 1);
-						mCube.setNoDamageTicks(mCube.getMaximumNoDamageTicks());
-						mCube.setCustomName(ChatColor.RED + "Red Orb");
-						mCube.setCustomNameVisible(true);
-						if (r.nextInt(3) >= 1){
-							mCube.setSize(1);
-						} else {
-							mCube.setSize(r.nextInt(3) + 1);
-						}
-						mCube.setRemoveWhenFarAway(false);
-						minions.add(mCube);
-					}
-				}
+		if (r.nextBoolean()){
+			Slime sCube = loc.getWorld().spawn(loc, Slime.class);
+			sCube.setMaximumNoDamageTicks(r.nextInt(20) + 1);
+			sCube.setNoDamageTicks(sCube.getMaximumNoDamageTicks());
+			sCube.setCustomName(ChatColor.GREEN + "Green Orb");
+			sCube.setCustomNameVisible(true);
+			if (r.nextInt(3) >= 1){
+				sCube.setSize(1);
+			} else {
+				sCube.setSize(r.nextInt(3) + 1);
 			}
+			sCube.setRemoveWhenFarAway(false);
+			minions.add(sCube);
+		} else {
+			MagmaCube mCube = loc.getWorld().spawn(loc, MagmaCube.class);
+			mCube.setMaximumNoDamageTicks(r.nextInt(20) + 1);
+			mCube.setNoDamageTicks(mCube.getMaximumNoDamageTicks());
+			mCube.setCustomName(ChatColor.RED + "Red Orb");
+			mCube.setCustomNameVisible(true);
+			if (r.nextInt(3) >= 1){
+				mCube.setSize(1);
+			} else {
+				mCube.setSize(r.nextInt(3) + 1);
+			}
+			mCube.setRemoveWhenFarAway(false);
+			minions.add(mCube);
 		}
 	}
 	
@@ -413,7 +409,7 @@ public class BossMagic extends Boss implements Listener{
 	
 	public void undead(Location loc){
 		if (spawned){
-			if (minions.size() < 35){
+			if (minions.size() < 20){
 				Skeleton undead = loc.getWorld().spawn(loc, Skeleton.class);
 				undead.setMaximumNoDamageTicks(r.nextInt(20) + 1);
 				undead.setNoDamageTicks(undead.getMaximumNoDamageTicks());

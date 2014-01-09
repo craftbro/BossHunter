@@ -19,7 +19,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import code.boss.bosses.arenas.Arena;
+import code.boss.bosses.arenas.ArenaBlazo;
 import code.boss.bosses.arenas.ArenaGolem;
+import code.boss.bosses.arenas.ArenaMagic;
 import code.boss.bosses.arenas.ArenaPig;
 import code.boss.game.Game;
 import code.boss.item.SkullStack;
@@ -150,7 +152,7 @@ public class main extends JavaPlugin implements Listener{
 		
 		Bukkit.createWorld(new WorldCreator("worldB"));
 		
-		arena = new ArenaGolem(this);
+		arena = new ArenaBlazo(this);
 		
 		
 
