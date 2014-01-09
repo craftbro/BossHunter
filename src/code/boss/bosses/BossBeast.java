@@ -72,6 +72,7 @@ public class BossBeast extends Boss implements Listener{
 	
 	public void start(){
 		timer = 0;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		plugin.util.broadcastDelaySound(u_v + "Hello " + plugin.util.randomNameFormat() + "!", Sound.EAT, 1, timer += 70);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Who are you?", Sound.VILLAGER_NO, 1, timer += 60);
 		plugin.util.broadcastDelaySound(u_v + "That can wait! Please help us", Sound.EAT, 1, timer += 50);

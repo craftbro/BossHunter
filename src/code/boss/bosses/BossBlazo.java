@@ -24,6 +24,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -47,7 +48,7 @@ import code.boss.main.main;
  * Please find a better name.....
  * @author rasmusrune
  */
-public class BossBlazo extends Boss{
+public class BossBlazo extends Boss implements Listener{
 	public List<Entity> charging = new ArrayList<Entity>();
 	public static int timer = 0;
 	static int attacks = 0;
@@ -64,13 +65,14 @@ public class BossBlazo extends Boss{
 	
 	public void start(){
 		timer = 0;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		plugin.util.broadcastDelaySound(u_v + "Get away from my house " + plugin.util.randomName() + "! And take all your friends with you!", Sound.AMBIENCE_THUNDER, 1, timer += 60);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Your house?? Its mine!", Sound.VILLAGER_HIT, 1, timer += 70);
 		plugin.util.broadcastDelaySound(u_v + "Its MY house and i have MY power to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 80);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Its my house and you stole it! Come down so i can fight you", Sound.VILLAGER_NO, 1, timer += 60);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "And tell me Who are You!", Sound.VILLAGER_NO, 1, timer += 50);
 		plugin.util.broadcastDelaySound(u_v + "I am....", Sound.AMBIENCE_THUNDER, 1, timer += 90);
-		plugin.util.broadcastDelaySound(b_v + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
+		plugin.util.broadcastDelaySound(b_v + "They call me " + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Give me my house back now or prepair to die", Sound.VILLAGER_NO, 1, timer += 70);
 		plugin.util.broadcastDelaySound(b_v + "If you really wish to get squashed...", Sound.AMBIENCE_THUNDER, 1, timer += 75);
 		new BukkitRunnable(){

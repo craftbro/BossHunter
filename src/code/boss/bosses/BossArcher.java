@@ -22,6 +22,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -41,7 +42,7 @@ import code.boss.main.main;
  * The class of the boss "Archer King"
  * @author rasmusrune
  */
-public class BossArcher extends Boss{
+public class BossArcher extends Boss implements Listener{
 	public List<Entity> charging = new ArrayList<Entity>();
 	public static int timer = 0;
 	static int attacks = 0;
@@ -58,6 +59,7 @@ public class BossArcher extends Boss{
 	
 	public void start(){
 		timer = 0;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
 			public void run(){
 				for (Player online : Bukkit.getOnlinePlayers()){
@@ -156,19 +158,19 @@ public class BossArcher extends Boss{
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
 		if (entity.getUniqueId() == boss.getUniqueId()){
-			if (boss.getHealth() / 6 <= 500 && !optimized1){
+			if (boss.getHealth() / 6 <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
 			}
-			if (boss.getHealth() / 6 <= 400 && !optimized2){
+			if (boss.getHealth() / 6 <= 70 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (boss.getHealth() / 6 <= 300 && !optimized3){
+			if (boss.getHealth() / 6 <= 50 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 			}
-			if (boss.getHealth() / 6 <= 200 && !optimized4){
+			if (boss.getHealth() / 6 <= 40 && !optimized4){
 				optimized4 = true;
 				attacks = 5;
 			}
