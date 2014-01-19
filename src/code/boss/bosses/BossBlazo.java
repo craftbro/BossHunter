@@ -98,7 +98,7 @@ public class BossBlazo extends Boss implements Listener{
 				if (r.nextInt(200) == 0){
 					fireball(boss);
 				}
-				if (r.nextInt(180) == 0 && this.getMinionsSize() < 30){
+				if (r.nextInt(180) == 0 && this.getMinionsSize() < 15){
 					for (int x = r.nextInt(5) + 3; x > 0; x--){
 						fireSpirit(boss.getLocation());
 					}
@@ -265,6 +265,7 @@ public class BossBlazo extends Boss implements Listener{
 		} else {
 			spirit.setVillager(false);
 		}
+		spirit.setFireTicks(9999999);
 		minions.add(spirit);
 	}
 	

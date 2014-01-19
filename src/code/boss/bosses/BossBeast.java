@@ -273,7 +273,7 @@ public class BossBeast extends Boss implements Listener{
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event){
-		if (event.getEntity().getType() == EntityType.PLAYER && event.getTarget().getType() == EntityType.PLAYER){
+		if (event.getEntity().getType() != EntityType.PLAYER && event.getTarget().getType() != EntityType.PLAYER){
 			event.setCancelled(true);
 		}
 	}
