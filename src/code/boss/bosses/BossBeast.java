@@ -45,6 +45,8 @@ import org.bukkit.util.Vector;
 
 
 
+
+
 import code.boss.effect.ParticleEffect;
 import code.boss.effect.ras.RasEffect;
 import code.boss.item.ColoredStack;
@@ -73,7 +75,7 @@ public class BossBeast extends Boss implements Listener{
 	public void start(){
 		timer = 0;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		plugin.util.broadcastDelaySound(u_v + "Hello " + plugin.util.randomNameFormat() + "!", Sound.EAT, 1, timer += 70);
+		plugin.util.broadcastDelaySound(u_v + "Hello " + plugin.util.randomName() + "!", Sound.EAT, 1, timer += 70);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Who are you?", Sound.VILLAGER_NO, 1, timer += 60);
 		plugin.util.broadcastDelaySound(u_v + "That can wait! Please help us", Sound.EAT, 1, timer += 50);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We won't help before we know who you are", Sound.VILLAGER_NO, 1, timer += 65);
@@ -113,9 +115,11 @@ public class BossBeast extends Boss implements Listener{
 	public void tick(){
 		if (spawned){
 			if (attacks >= 1){
-				if (r.nextInt(205) == 0 && this.getMinionsSize() < 35){
-					for (int x = r.nextInt(6) + 5; x > 0; x--){
-						infect(boss);
+				if (r.nextInt(205) == 0 && this.getMinionsSize() < 17){
+					if (boss.getPassenger() == null){
+						for (int x = r.nextInt(6) + 3; x > 0; x--){
+							infect(boss);
+						}
 					}
 				}
 			}
@@ -145,59 +149,62 @@ public class BossBeast extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
-		if (entity.getUniqueId() == boss.getUniqueId()){
-			for (ItemStack armor : boss.getEquipment().getArmorContents()){
-				armor.setDurability((short) 0);
-			}
-			if (boss.getHealth() / 6.5 <= 70 && !optimized1){
-				optimized1 = true;
-				spawned = false;
-				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Was that really what you was that scared of? Now show yourself!", Sound.VILLAGER_YES, 1, 0);
-				plugin.util.broadcastDelaySound(u_v + "Its far from over yet!", Sound.EAT, 1, 60);
-				RasEffect.LARGE_SMOKE.display(boss.getLocation(), 1, 2, 1, 1.5F, 40);
-				final double health = boss.getHealth();
-				boss.remove();
-				new BukkitRunnable(){
-					public void run(){
-						boss = (LivingEntity) Bukkit.getWorld("world").spawnEntity(new Location(Bukkit.getWorld("world"), 101, 98, 198), EntityType.ZOMBIE);
-						boss.setMaxHealth(650);
-						boss.setHealth(health);
-						boss.setCustomName(ChatColor.DARK_GREEN + "Beast");
-						boss.setCustomNameVisible(true);
-						boss.setRemoveWhenFarAway(false);
-						boss.setCanPickupItems(false);
-						((Zombie) boss).setBaby(false);
-						((Zombie) boss).setVillager(false);
-						EntityEquipment eq = boss.getEquipment();
-						eq.clear();
-						eq.setHelmet(new ColoredStack(Color.fromRGB(22, 158, 47), Material.LEATHER_LEGGINGS));
-						eq.setChestplate(new ColoredStack(Color.fromRGB(34, 211, 214), Material.LEATHER_LEGGINGS));
-						eq.setLeggings(new ColoredStack(Color.fromRGB(34, 133, 214), Material.LEATHER_LEGGINGS));
-						eq.setBoots(new ColoredStack(Color.fromRGB(148, 148, 148), Material.LEATHER_LEGGINGS));
-						eq.setBootsDropChance(0);
-						eq.setLeggingsDropChance(0);
-						eq.setChestplateDropChance(0);
-						eq.setHelmetDropChance(0);
-						((CraftLivingEntity) boss).getHandle().setSprinting(true);
-						attacks = 2;
-						spawned = true;
-					}
-				}.runTaskLater(plugin, 140);
-			}
-			if (boss.getHealth() / 6.5 <= 50 && !optimized2){
-				optimized2 = true;
-				attacks = 3;
-			}
-			if (boss.getHealth() / 6.5 <= 30 && !optimized3){
-				optimized3 = true;
-				attacks = 4;
-			}
-		} else if (mayorUuid != null){
-			if (entity.getUniqueId() == mayorUuid){
-				event.setCancelled(true);
-				Location loc = ((LivingEntity) entity).getEyeLocation();
-				loc.setY(loc.getY() + 1);
-				ParticleEffect.ANGRY_VILLAGER.animateAtLocation(loc, 40, 1);
+		if (boss != null){
+			if (entity.getUniqueId() == boss.getUniqueId()){
+				for (ItemStack armor : boss.getEquipment().getArmorContents()){
+					armor.setDurability((short) 0);
+				}
+				if (boss.getHealth() / 6.5 <= 70 && !optimized1){
+					optimized1 = true;
+					spawned = false;
+					plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Was that really what you was that scared of? Now show yourself!", Sound.VILLAGER_YES, 1, 0);
+					plugin.util.broadcastDelaySound(u_v + "Its far from over yet!", Sound.EAT, 1, 60);
+					RasEffect.LARGE_SMOKE.display(boss.getLocation(), 1, 2, 1, 1.5F, 40);
+					final double health = boss.getHealth();
+					boss.remove();
+					boss = null;
+					Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+						public void run(){
+							boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getEyeLocation(), EntityType.ZOMBIE);
+							boss.setMaxHealth(650);
+							boss.setHealth(health);
+							boss.setCustomName(ChatColor.DARK_GREEN + "Beast");
+							boss.setCustomNameVisible(true);
+							boss.setRemoveWhenFarAway(false);
+							boss.setCanPickupItems(false);
+							((Zombie) boss).setBaby(false);
+							((Zombie) boss).setVillager(false);
+							EntityEquipment eq = boss.getEquipment();
+							eq.clear();
+							eq.setHelmet(new ColoredStack(Color.fromRGB(22, 158, 47), Material.LEATHER_LEGGINGS));
+							eq.setChestplate(new ColoredStack(Color.fromRGB(34, 211, 214), Material.LEATHER_LEGGINGS));
+							eq.setLeggings(new ColoredStack(Color.fromRGB(34, 133, 214), Material.LEATHER_LEGGINGS));
+							eq.setBoots(new ColoredStack(Color.fromRGB(148, 148, 148), Material.LEATHER_LEGGINGS));
+							eq.setBootsDropChance(0);
+							eq.setLeggingsDropChance(0);
+							eq.setChestplateDropChance(0);
+							eq.setHelmetDropChance(0);
+							((CraftLivingEntity) boss).getHandle().setSprinting(true);
+							attacks = 2;
+							spawned = true;
+						}
+					}, 140);
+				}
+				if (boss.getHealth() / 6.5 <= 50 && !optimized2){
+					optimized2 = true;
+					attacks = 3;
+				}
+				if (boss.getHealth() / 6.5 <= 30 && !optimized3){
+					optimized3 = true;
+					attacks = 4;
+				}
+			} else if (mayorUuid != null){
+				if (entity.getUniqueId() == mayorUuid){
+					event.setCancelled(true);
+					Location loc = ((LivingEntity) entity).getEyeLocation();
+					loc.setY(loc.getY() + 1);
+					ParticleEffect.ANGRY_VILLAGER.animateAtLocation(loc, 40, 1);
+				}
 			}
 		}
 	}
@@ -207,6 +214,9 @@ public class BossBeast extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		Entity entity = event.getEntity();
+		if (entity.getType() == EntityType.PLAYER){
+			deadVillagers++;
+		}
 		if (entity.getType() == EntityType.VILLAGER){
 			deadVillagers++;
 			Zombie zombie = entity.getWorld().spawn(entity.getLocation(), Zombie.class);
@@ -218,54 +228,57 @@ public class BossBeast extends Boss implements Listener{
 			}
 			zombie.setVillager(true);
 			zombie.setRemoveWhenFarAway(false);
+			zombie.setHealth(r.nextInt(7) + 1);
 			minions.add(zombie);
-		} else if (entity.getUniqueId() == boss.getUniqueId()){
-			spawned = false;
-			timer = 0;
-			if (boss.getKiller() != null){
-				if (r.nextInt(60) == 0){
-					NamedStack potato = new NamedStack(ChatColor.GOLD + "Mutated Potato", Material.BAKED_POTATO);
-					List<String> potatoLore = new ArrayList<String>();
-					potatoLore.add("Earned when killing the boss \"Mutated Potato\"");
-					plugin.util.addLore(potato, potatoLore);
-					plugin.collect.giveItem(boss.getKiller(), potato);
-					boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
-				}
-			}
-			plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Beast" , Sound.ENDERDRAGON_DEATH, 1, timer);
-			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Finnaly we got that beast down! Now who are you?", Sound.VILLAGER_YES, 1, timer += 160);
-			plugin.util.broadcastDelaySound(u_v + "I am...", Sound.EAT, 1, timer += 80);
-			plugin.util.broadcastDelaySound(v_m + "The Mayor of Happy Town!", Sound.FIREWORK_LAUNCH, 1, timer += 120);
-			new BukkitRunnable() {
-				public void run() {
-					Villager villager = randomPlayer().getWorld().spawn(randomPlayer().getLocation(), Villager.class);
-					((CraftVillager) villager).getHandle().setProfession(5);
-					villager.setAdult();
-					villager.setAgeLock(true);
-					villager.setRemoveWhenFarAway(false);
-					villager.setCustomName(ChatColor.GREEN + "Mayor of Happy Town");
-					villager.setCustomNameVisible(true);
-					mayorUuid = villager.getUniqueId();
-				}
-			}.runTaskLater(plugin, timer += 10);
-			plugin.util.broadcastDelaySound(v_m + "Thanks for freeing us from the beast!", Sound.EAT, 1, timer += 60);
-			plugin.util.broadcastDelaySound(v_m + "But sadly " + deadVillagers + " Died...", Sound.EAT, 1, timer += 65);
-			plugin.util.broadcastDelaySound(v_m + "So get out of here before i destroy you too!", Sound.EAT, 1, timer += 70);
-			new BukkitRunnable(){
-				public void run(){
-					for (Player online : Bukkit.getOnlinePlayers()){
-						online.setVelocity(new Vector(0, Math.PI, 0));
+		} else if (boss != null){
+			if (entity.getUniqueId() == boss.getUniqueId()){
+				spawned = false;
+				timer = 0;
+				if (boss.getKiller() != null){
+					if (r.nextInt(60) == 0){
+						NamedStack potato = new NamedStack(ChatColor.GOLD + "Mutated Potato", Material.BAKED_POTATO);
+						List<String> potatoLore = new ArrayList<String>();
+						potatoLore.add("Earned when killing the boss \"Mutated Potato\"");
+						plugin.util.addLore(potato, potatoLore);
+						plugin.collect.giveItem(boss.getKiller(), potato);
+						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
 					}
 				}
-			}.runTaskLater(plugin, timer += 40);
-			new BukkitRunnable(){
-				public void run(){
-					plugin.stop();
-				}
-			}.runTaskLater(plugin, timer += 50);
-		}
-		if (minions.contains(entity)){
-			minions.remove(entity);
+				plugin.util.broadcastDelaySound(ChatColor.GOLD + "Congratulations! You beated the Beast" , Sound.ENDERDRAGON_DEATH, 1, timer);
+				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Finnaly we got that beast down! Now who are you?", Sound.VILLAGER_YES, 1, timer += 160);
+				plugin.util.broadcastDelaySound(u_v + "I am...", Sound.EAT, 1, timer += 80);
+				plugin.util.broadcastDelaySound(v_m + "The Mayor of Happy Town!", Sound.FIREWORK_LAUNCH, 1, timer += 120);
+				new BukkitRunnable() {
+					public void run() {
+						Villager villager = randomPlayer().getWorld().spawn(randomPlayer().getLocation(), Villager.class);
+						((CraftVillager) villager).getHandle().setProfession(5);
+						villager.setAdult();
+						villager.setAgeLock(true);
+						villager.setRemoveWhenFarAway(false);
+						villager.setCustomName(ChatColor.GREEN + "Mayor of Happy Town");
+						villager.setCustomNameVisible(true);
+						mayorUuid = villager.getUniqueId();
+					}
+				}.runTaskLater(plugin, timer += 10);
+				plugin.util.broadcastDelaySound(v_m + "Thanks for freeing us from the beast!", Sound.EAT, 1, timer += 60);
+				plugin.util.broadcastDelaySound(v_m + "But sadly " + deadVillagers + " Died...", Sound.EAT, 1, timer += 65);
+				plugin.util.broadcastDelaySound(v_m + "So get out of here before i destroy you too!", Sound.EAT, 1, timer += 70);
+				new BukkitRunnable(){
+					public void run(){
+						for (Player online : Bukkit.getOnlinePlayers()){
+							online.setVelocity(new Vector(0, Math.PI, 0));
+						}
+					}
+				}.runTaskLater(plugin, timer += 40);
+				new BukkitRunnable(){
+					public void run(){
+						plugin.stop();
+					}
+				}.runTaskLater(plugin, timer += 50);
+			}
+			if (minions.contains(entity)){
+				minions.remove(entity);
+			}
 		}
 	}
 	
@@ -273,7 +286,24 @@ public class BossBeast extends Boss implements Listener{
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event){
-		if (event.getEntity().getType() != EntityType.PLAYER && event.getTarget().getType() != EntityType.PLAYER){
+		if (event.getEntity() != null && event.getTarget() != null){
+			if (event.getEntity().getType() != EntityType.PLAYER && event.getTarget().getType() != EntityType.PLAYER){
+				if (event.getEntity().getWorld().getName() == "BOSS"){
+					if (boss != null){
+						if (boss.getUniqueId() == event.getEntity().getUniqueId()){
+							event.setCancelled(true);
+							plugin.util.setTargetToNearest(boss);
+						} else {
+							event.setCancelled(true);
+						}
+					} else {
+						event.setCancelled(true);
+					}
+				} else {
+					event.setCancelled(true);
+				}
+			}
+		} else {
 			event.setCancelled(true);
 		}
 	}
@@ -291,8 +321,10 @@ public class BossBeast extends Boss implements Listener{
 			villager2.setMaximumNoDamageTicks(4);
 			villager2.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999999, 64));
 			villager.setPassenger(villager2);
+			minions.add(villager2);
 		}
 		entity.setPassenger(villager);
+		minions.add(villager);
 	}
 	
 	
@@ -316,7 +348,7 @@ public class BossBeast extends Boss implements Listener{
 										} else {
 											zombie.setBaby(false);
 										}
-										if (r.nextInt(24) == 0){
+										if (r.nextInt(19) == 0){
 											zombie.setVillager(true);
 										} else {
 											zombie.setVillager(false);

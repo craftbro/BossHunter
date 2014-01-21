@@ -19,6 +19,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import code.boss.bosses.arenas.Arena;
+import code.boss.bosses.arenas.ArenaBeast;
 import code.boss.bosses.arenas.ArenaBlazo;
 import code.boss.bosses.arenas.ArenaGolem;
 import code.boss.bosses.arenas.ArenaMagic;
@@ -148,11 +149,11 @@ public class main extends JavaPlugin implements Listener{
 		shop = new Shop(this);
 		collect = new Collect(this);
 		
-		util.copyWorld();
+		util.copyWorld().setGameRuleValue("keepInventory", "true");
 		
-		Bukkit.createWorld(new WorldCreator("worldB"));
+		Bukkit.createWorld(new WorldCreator("worldB")).setGameRuleValue("keepInventory", "true");
 		
-		arena = new ArenaBlazo(this);
+		arena = new ArenaBeast(this);
 		
 		
 
