@@ -153,7 +153,7 @@ public class main extends JavaPlugin implements Listener{
 		
 		Bukkit.createWorld(new WorldCreator("worldB")).setGameRuleValue("keepInventory", "true");
 		
-		arena = new ArenaBeast(this);
+		arena = new ArenaBlazo(this);
 		
 		
 

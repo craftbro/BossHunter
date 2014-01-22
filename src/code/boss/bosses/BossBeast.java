@@ -17,6 +17,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.Warning;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftVillager;
 import org.bukkit.entity.Entity;
@@ -28,15 +29,25 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -57,6 +68,8 @@ import code.boss.main.main;
  * The class of the boss "Beast"
  * @author rasmusrune
  */
+@Deprecated
+@Warning(value=true,reason="F*ck'd up")
 public class BossBeast extends Boss implements Listener{
 	static int attacks = 0;
 	public static int timer = 0;
@@ -102,7 +115,7 @@ public class BossBeast extends Boss implements Listener{
 				eq.setLeggingsDropChance(0);
 				eq.setChestplateDropChance(0);
 				eq.setHelmetDropChance(0);
-				((CraftLivingEntity) boss).getHandle().setSprinting(true);
+				((CraftLivingEntity) boss).getHandle().setSprinting(false);
 				boss.setCanPickupItems(false);
 				boss.setRemoveWhenFarAway(false);
 				attacks = 1;
@@ -115,29 +128,35 @@ public class BossBeast extends Boss implements Listener{
 	public void tick(){
 		if (spawned){
 			if (attacks >= 1){
-				if (r.nextInt(205) == 0 && this.getMinionsSize() < 17){
-					if (boss.getPassenger() == null){
-						for (int x = r.nextInt(6) + 3; x > 0; x--){
-							infect(boss);
-						}
+				if (r.nextInt(215) == 0 && this.getMinionsSize() < 17){
+					for (int x = r.nextInt(6) + 1; x > 0; x--){
+						infect(boss);
 					}
 				}
 			}
 			if (attacks >= 2){
-				if (r.nextInt(190) == 0){
+				if (r.nextInt(260) == 0){
 					call(boss.getLocation());
 				}
 			}
 			if (attacks >= 3){
-				if (r.nextInt(250) == 0){
+				if (r.nextInt(290) == 0){
 					rottenAura(boss);
 				}
 			}
 			if (attacks >= 4){
-				if (r.nextInt(350) == 0){
-					doomShot(boss, plugin.util.getNearest(boss));
+				if (r.nextInt(375) == 0){
+					doomShot(boss, randomPlayer());
 				}
 			}
+		}
+	}
+	
+	
+	@EventHandler
+	public void onCreatureSpawn(CreatureSpawnEvent event){
+		if (event.getSpawnReason() == SpawnReason.NATURAL || event.getSpawnReason() == SpawnReason.REINFORCEMENTS){
+			event.setCancelled(true);
 		}
 	}
 	
@@ -149,7 +168,7 @@ public class BossBeast extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
-		if (boss != null){
+		if (spawned){
 			if (entity.getUniqueId() == boss.getUniqueId()){
 				for (ItemStack armor : boss.getEquipment().getArmorContents()){
 					armor.setDurability((short) 0);
@@ -201,9 +220,7 @@ public class BossBeast extends Boss implements Listener{
 			} else if (mayorUuid != null){
 				if (entity.getUniqueId() == mayorUuid){
 					event.setCancelled(true);
-					Location loc = ((LivingEntity) entity).getEyeLocation();
-					loc.setY(loc.getY() + 1);
-					ParticleEffect.ANGRY_VILLAGER.animateAtLocation(loc, 40, 1);
+					ParticleEffect.ANGRY_VILLAGER.animateAtLocation(((LivingEntity) entity).getEyeLocation(), 40, 1);
 				}
 			}
 		}
@@ -214,23 +231,7 @@ public class BossBeast extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		Entity entity = event.getEntity();
-		if (entity.getType() == EntityType.PLAYER){
-			deadVillagers++;
-		}
-		if (entity.getType() == EntityType.VILLAGER){
-			deadVillagers++;
-			Zombie zombie = entity.getWorld().spawn(entity.getLocation(), Zombie.class);
-			zombie.setCanPickupItems(false);
-			if (!((Villager) entity).isAdult()){
-				zombie.setBaby(true);
-			} else {
-				zombie.setBaby(false);
-			}
-			zombie.setVillager(true);
-			zombie.setRemoveWhenFarAway(false);
-			zombie.setHealth(r.nextInt(7) + 1);
-			minions.add(zombie);
-		} else if (boss != null){
+		if (spawned){
 			if (entity.getUniqueId() == boss.getUniqueId()){
 				spawned = false;
 				timer = 0;
@@ -238,7 +239,7 @@ public class BossBeast extends Boss implements Listener{
 					if (r.nextInt(60) == 0){
 						NamedStack potato = new NamedStack(ChatColor.GOLD + "Mutated Potato", Material.BAKED_POTATO);
 						List<String> potatoLore = new ArrayList<String>();
-						potatoLore.add("Earned when killing the boss \"Mutated Potato\"");
+						potatoLore.add("Earned when killing the boss \"Beast\"");
 						plugin.util.addLore(potato, potatoLore);
 						plugin.collect.giveItem(boss.getKiller(), potato);
 						boss.getKiller().sendMessage(ChatColor.GREEN + "The Item 'Mutated Potato' was added to your Collection!");
@@ -276,55 +277,33 @@ public class BossBeast extends Boss implements Listener{
 					}
 				}.runTaskLater(plugin, timer += 50);
 			}
-			if (minions.contains(entity)){
-				minions.remove(entity);
-			}
 		}
-	}
-	
-	
-	
-	@EventHandler
-	public void onEntityTarget(EntityTargetEvent event){
-		if (event.getEntity() != null && event.getTarget() != null){
-			if (event.getEntity().getType() != EntityType.PLAYER && event.getTarget().getType() != EntityType.PLAYER){
-				if (event.getEntity().getWorld().getName() == "BOSS"){
-					if (boss != null){
-						if (boss.getUniqueId() == event.getEntity().getUniqueId()){
-							event.setCancelled(true);
-							plugin.util.setTargetToNearest(boss);
-						} else {
-							event.setCancelled(true);
-						}
-					} else {
-						event.setCancelled(true);
-					}
-				} else {
-					event.setCancelled(true);
-				}
-			}
-		} else {
-			event.setCancelled(true);
+		if (minions.contains(entity)){
+			minions.remove(entity);
 		}
 	}
 	
 	
 	public void infect(Entity entity){
-		Villager villager = entity.getWorld().spawn(entity.getLocation(), Villager.class);
-		villager.setAgeLock(true);
-		villager.setAdult();
-		villager.setMaximumNoDamageTicks(4);
-		villager.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999999, 64));
+		deadVillagers++;
 		if (r.nextInt(3) == 0){
-			Villager villager2 = villager.getWorld().spawn(entity.getLocation(), Villager.class);
-			villager.setBaby();
-			villager2.setMaximumNoDamageTicks(4);
-			villager2.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999999, 64));
-			villager.setPassenger(villager2);
-			minions.add(villager2);
+			deadVillagers++;
+			Zombie zombie = entity.getWorld().spawn(entity.getLocation(), Zombie.class);
+			zombie.setCanPickupItems(false);
+			zombie.setBaby(true);
+			zombie.setVillager(true);
+			zombie.setRemoveWhenFarAway(false);
+			zombie.setHealth(r.nextInt(7) + 1);
+			minions.add(zombie);
 		}
-		entity.setPassenger(villager);
-		minions.add(villager);
+		deadVillagers++;
+		Zombie zombie = entity.getWorld().spawn(entity.getLocation(), Zombie.class);
+		zombie.setCanPickupItems(false);
+		zombie.setBaby(false);
+		zombie.setVillager(true);
+		zombie.setRemoveWhenFarAway(false);
+		zombie.setHealth(r.nextInt(7) + 1);
+		minions.add(zombie);
 	}
 	
 	
@@ -387,7 +366,7 @@ public class BossBeast extends Boss implements Listener{
 	public void doomShot(LivingEntity shooter, final Entity target){
 		final Location sLoc = shooter.getEyeLocation();
 		Location tLoc = target.getLocation();
-		final Vector vec = tLoc.toVector().subtract(sLoc.toVector()).normalize().multiply(0.25);
+		final Vector vec = tLoc.toVector().subtract(sLoc.toVector()).normalize().multiply(0.06);
 		new BukkitRunnable(){
 			int counter = 0;
 			Location currentLoc = sLoc.add(vec);
@@ -407,7 +386,7 @@ public class BossBeast extends Boss implements Listener{
 					if (entity.getUniqueId() == target.getUniqueId()){
 						currentLoc.getWorld().playSound(currentLoc, Sound.FIZZ, 4, 0.7F);
 						if (target instanceof LivingEntity){
-							((LivingEntity) target).damage(99E99 * (Math.PI * Math.E) * r.nextInt(10));
+							((LivingEntity) target).damage(99E99);
 						} else {
 							target.remove();
 						}

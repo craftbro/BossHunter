@@ -154,13 +154,15 @@ public class PlayerManager implements Listener {
 	public void kill(EntityDeathEvent event){
 		LivingEntity e = event.getEntity();
 		if(e.getKiller() != null){
-			if(e.getUniqueId() != plugin.arena.getBoss().getBoss().getUniqueId()){
-				plugin.util.giveExpAndMoney(e.getKiller(), 10, 10, "Killing An Enemy");
-			}else{
-//				plugin.level.giveExp(e.getKiller(), 200, "Killing The Boss");
-//				plugin.eco.giveMoney(e.getKiller(), 200, "Killing The Boss");
-				plugin.util.giveExpAndMoney(e.getKiller(), 200, 200, "Killing The Boss");
-				Bukkit.broadcastMessage(plugin.arena.getBoss().getBoss().getCustomName()+ChatColor.GREEN+" was slain by "+e.getKiller().getName());
+			if (plugin.arena.getBoss().isSpawned()){
+				if(e.getUniqueId() != plugin.arena.getBoss().getBoss().getUniqueId()){
+					plugin.util.giveExpAndMoney(e.getKiller(), 10, 10, "Killing An Enemy");
+				}else{
+	//				plugin.level.giveExp(e.getKiller(), 200, "Killing The Boss");
+	//				plugin.eco.giveMoney(e.getKiller(), 200, "Killing The Boss");
+					plugin.util.giveExpAndMoney(e.getKiller(), 200, 200, "Killing The Boss");
+					Bukkit.broadcastMessage(plugin.arena.getBoss().getBoss().getCustomName()+ChatColor.GREEN+" was slain by "+e.getKiller().getName());
+				}
 			}
 		}
 	}

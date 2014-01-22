@@ -18,10 +18,10 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -71,8 +72,8 @@ public class BossBlazo extends Boss implements Listener{
 		plugin.util.broadcastDelaySound(u_v + "Its MY house and i have MY power to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 80);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Its my house and you stole it! Come down so i can fight you", Sound.VILLAGER_NO, 1, timer += 60);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "And tell me Who are You!", Sound.VILLAGER_NO, 1, timer += 50);
-		plugin.util.broadcastDelaySound(u_v + "I am....", Sound.AMBIENCE_THUNDER, 1, timer += 90);
-		plugin.util.broadcastDelaySound(b_v + "They call me " + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
+		plugin.util.broadcastDelaySound(u_v + "They call me....", Sound.AMBIENCE_THUNDER, 1, timer += 90);
+		plugin.util.broadcastDelaySound(b_v + bossName, Sound.AMBIENCE_THUNDER, 1, timer += 130);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Give me my house back now or prepair to die", Sound.VILLAGER_NO, 1, timer += 70);
 		plugin.util.broadcastDelaySound(b_v + "If you really wish to get squashed...", Sound.AMBIENCE_THUNDER, 1, timer += 75);
 		new BukkitRunnable(){
@@ -80,8 +81,8 @@ public class BossBlazo extends Boss implements Listener{
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("world"), -369, 62.5, -8), EntityType.BLAZE);
 				boss.setCustomName(ChatColor.RED + bossName);
 				boss.setCustomNameVisible(true);
-				boss.setMaxHealth(450);
-				boss.setHealth(450);
+				boss.setMaxHealth(675);
+				boss.setHealth(675);
 				boss.setRemoveWhenFarAway(false);
 				spawned = true;
 				attacks = 1;
@@ -95,11 +96,11 @@ public class BossBlazo extends Boss implements Listener{
 	public void tick(){
 		if (spawned){
 			if (attacks >= 1){
-				if (r.nextInt(200) == 0){
+				if (r.nextInt(185) == 0){
 					fireball(boss);
 				}
-				if (r.nextInt(180) == 0 && this.getMinionsSize() < 15){
-					for (int x = r.nextInt(5) + 3; x > 0; x--){
+				if (r.nextInt(240) == 0 && this.getMinionsSize() < 15){
+					for (int x = r.nextInt(3) + 2; x > 0; x--){
 						fireSpirit(boss.getLocation());
 					}
 				}
@@ -140,31 +141,33 @@ public class BossBlazo extends Boss implements Listener{
 		if (charging.contains(event.getEntity())){
 			event.setCancelled(true);
 		}
-		if (event.getEntity().getUniqueId() == boss.getUniqueId()){
-			if (boss.getHealth() / 4.5 <= 70 && !optimized1){
-				optimized1 = true;
-				attacks = 2;
-			}
-			if (boss.getHealth() / 4.5 <= 50 && !optimized2){
-				optimized2 = true;
-				attacks = 3;
-				timer = 0;
-				plugin.util.broadcastDelaySound(b_v + "I tried to go easy on you. But you like nearly ask me to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 40);
-			}
-			if (boss.getHealth() / 4.5 <= 30 && !optimized3){
-				optimized3 = true;
-				attacks = 4;
-				timer = 0;
-				plugin.util.broadcastDelaySound(b_v + "Why are you even trying to take my house? We could be friends!", Sound.AMBIENCE_THUNDER, 1, timer += 20);
-				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "MY house you mean!", Sound.VILLAGER_NO, 1, timer += 70);
-				plugin.util.broadcastDelaySound(b_v + "I will never give my house away! Give up already", Sound.AMBIENCE_THUNDER, 1, timer += 60);
-				new BukkitRunnable(){
-					public void run(){
-						if (!charging.contains(boss)){
-							bullscharge(boss, plugin.util.getNearest(boss));
+		if (spawned){
+			if (event.getEntity().getUniqueId() == boss.getUniqueId()){
+				if (boss.getHealth() / 6.75 <= 70 && !optimized1){
+					optimized1 = true;
+					attacks = 2;
+				}
+				if (boss.getHealth() / 6.75 <= 50 && !optimized2){
+					optimized2 = true;
+					attacks = 3;
+					timer = 0;
+					plugin.util.broadcastDelaySound(b_v + "I tried to go easy on you. But you like nearly ask me to squash you", Sound.AMBIENCE_THUNDER, 1, timer += 40);
+				}
+				if (boss.getHealth() / 6.75 <= 30 && !optimized3){
+					optimized3 = true;
+					attacks = 4;
+					timer = 0;
+					plugin.util.broadcastDelaySound(b_v + "Why are you even trying to take my house? We could be friends!", Sound.AMBIENCE_THUNDER, 1, timer += 20);
+					plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "MY house you mean!", Sound.VILLAGER_NO, 1, timer += 70);
+					plugin.util.broadcastDelaySound(b_v + "I will never give my house away! Give up already", Sound.AMBIENCE_THUNDER, 1, timer += 60);
+					new BukkitRunnable(){
+						public void run(){
+							if (!charging.contains(boss)){
+								bullscharge(boss, plugin.util.getNearest(boss));
+							}
 						}
-					}
-				}.runTaskLater(plugin, timer += 10);
+					}.runTaskLater(plugin, timer += 10);
+				}
 			}
 		}
 	}
@@ -174,7 +177,11 @@ public class BossBlazo extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
 		if (minions.contains(event.getDamager())){
-			event.getEntity().setFireTicks(event.getEntity().getFireTicks() + 50);
+			ParticleEffect.FLAME.animateAtLocation(event.getEntity().getLocation(), 50, 1);
+			event.getEntity().setVelocity(event.getEntity().getVelocity().subtract(new Vector(0, r.nextInt(153) / 100, 0)));
+			event.getEntity().setFireTicks(event.getEntity().getFireTicks() + 15);
+			minions.remove(event.getDamager());
+			event.getDamager().remove();
 		}
 	}
 	
@@ -245,13 +252,14 @@ public class BossBlazo extends Boss implements Listener{
 	
 	public void fireball(LivingEntity entity){
 		LargeFireball fireball = entity.launchProjectile(LargeFireball.class);
+		fireball.setDirection(entity.getLocation().getDirection());
 		fireball.setYield(0);
 		fireball.setIsIncendiary(false);
 	}
 	
 	
 	public void fireSpirit(Location loc){
-		Zombie spirit = loc.getWorld().spawn(loc, Zombie.class);
+		final Zombie spirit = loc.getWorld().spawn(loc, Zombie.class);
 		spirit.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999999, 64));
 		spirit.getEquipment().setHelmet(new ItemStack(Material.FIRE));
 		spirit.getEquipment().setItemInHand(new ItemStack(Material.FIRE));
@@ -265,7 +273,22 @@ public class BossBlazo extends Boss implements Listener{
 		} else {
 			spirit.setVillager(false);
 		}
-		spirit.setFireTicks(9999999);
+		new BukkitRunnable(){
+			public void run(){
+				spirit.setVelocity(new Vector(0, 6, 0));
+				ParticleEffect.FLAME.animateAtLocation(spirit.getLocation(), 1, 30);
+				new BukkitRunnable(){
+					public void run(){
+						spirit.setLastDamageCause(new EntityDamageEvent(null, DamageCause.FIRE, 99999999.99999999));
+						spirit.setHealth(0);
+					}
+				}.runTaskLater(plugin, 25);
+			}
+		}.runTaskLater(plugin, r.nextInt(201) + 200);
+		spirit.setMaximumNoDamageTicks(r.nextInt(20) + 1);
+		spirit.setMaxHealth(r.nextInt(20) + 1);
+		spirit.setHealth(spirit.getMaxHealth());
+		spirit.setNoDamageTicks(spirit.getMaximumNoDamageTicks());
 		minions.add(spirit);
 	}
 	
@@ -292,14 +315,14 @@ public class BossBlazo extends Boss implements Listener{
 		Location loc = entity.getLocation();
 		loc.setYaw(loc.getYaw() + (float) Math.PI * 2);
 		entity.teleport(loc);
-		entity.launchProjectile(Fireball.class);
+		entity.launchProjectile(SmallFireball.class);
 		loc.setPitch(loc.getPitch() + ((float) Math.PI * (float) Math.E));
 		entity.teleport(loc);
-		entity.launchProjectile(Fireball.class);
+		entity.launchProjectile(SmallFireball.class);
 		loc.setPitch(loc.getPitch() - ((float) Math.PI * (float) Math.E));
 		loc.setPitch(loc.getPitch() - ((float) Math.PI * (float) Math.E));
 		entity.teleport(loc);
-		entity.launchProjectile(Fireball.class);
+		entity.launchProjectile(SmallFireball.class);
 		loc.setPitch(loc.getPitch() + ((float) Math.PI * (float) Math.E));
 		entity.teleport(loc);
 	}
@@ -317,13 +340,13 @@ public class BossBlazo extends Boss implements Listener{
 			public void run() {
 				counter++;
 				Location tLoc = target.getLocation();
-				Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize().multiply(0.6);
+				Vector vec = currentLoc.toVector().subtract(tLoc.toVector()).normalize().multiply(0.6);
 				currentLoc = sLoc.add(vec);
 				entity.setVelocity(vec);
 				Iterator<Entity> itr = entity.getNearbyEntities(1, 1, 1).iterator();
 				while (itr.hasNext()){
-					Entity entity = itr.next();
-					if (entity.getUniqueId() == target.getUniqueId()){
+					Entity entity2 = itr.next();
+					if (entity2.getUniqueId() == target.getUniqueId()){
 						currentLoc.getWorld().playSound(currentLoc, Sound.EXPLODE, 7, 0);
 						if (target instanceof LivingEntity){
 							((LivingEntity) target).damage(8);
