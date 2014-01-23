@@ -92,12 +92,13 @@ public class BossArcher extends Boss implements Listener{
 		plugin.util.broadcastDelaySound(a_v + "I will come down and fight you but only to train my archer skills", Sound.BLAZE_BREATH, 1, timer += 75);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 99, 65, 99), EntityType.SKELETON);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), /*99, 65, 99*/-393, 62.5, -8), EntityType.SKELETON);
 				EntityEquipment equipment = boss.getEquipment();
 				equipment.setBoots(new ColoredStack(Color.GREEN, Material.LEATHER_LEGGINGS));
 				equipment.setLeggings(new ColoredStack(Color.GREEN, Material.LEATHER_CHESTPLATE));
 				equipment.setChestplate(new ColoredStack(Color.GREEN, Material.LEATHER_CHESTPLATE));
 				equipment.setHelmet(new ColoredStack(Color.GREEN, Material.LEATHER_HELMET));
+				equipment.setItemInHand(new ItemStack(Material.BOW));
 				boss.setCanPickupItems(false);
 				boss.setCustomName(ChatColor.GREEN + "Archer King");
 				boss.setCustomNameVisible(true);
@@ -113,17 +114,18 @@ public class BossArcher extends Boss implements Listener{
 	
 	public void tick(){
 		if (spawned){
-			if (r.nextInt(11) == 0){
-				Vector vec = plugin.util.getNearest(boss).getLocation().toVector().subtract(boss.getLocation().toVector()).normalize().multiply(2);
+			if(!boss.getLocation().getChunk().isLoaded()){
+				boss.getLocation().getChunk().load();
+			}
+			if (r.nextInt(28) == 0){
+				Vector vec = boss.getLocation().toVector().subtract(plugin.util.getNearest(boss).getLocation().toVector()).normalize().multiply(1.2);
 				vec.setY(0);
 				boss.setVelocity(vec);
 				plugin.util.setTargetToNearest(boss);
 			}
 			if (attacks >= 1){
-				if (r.nextInt(200) == 0){
-					for (int x = r.nextInt(21) + 10; x > 0; x--){
-						arrow(boss);
-					}
+				if (r.nextInt(210) == 0){
+					arrows(boss);
 				}
 			}
 			if (attacks >= 2){
@@ -157,7 +159,7 @@ public class BossArcher extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
-		if (entity.getUniqueId() == boss.getUniqueId()){
+		if (spawned && entity.getUniqueId() == boss.getUniqueId()){
 			if (boss.getHealth() / 6 <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
@@ -183,12 +185,12 @@ public class BossArcher extends Boss implements Listener{
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
 		Entity entity = event.getEntity();
 		Entity damager = event.getDamager();
-		if (entity.getUniqueId() == boss.getUniqueId()){
-			Vector vec = damager.getLocation().toVector().subtract(entity.getLocation().toVector()).normalize().multiply(3);
+		if (boss != null && entity.getUniqueId() == boss.getUniqueId()){
+			Vector vec = entity.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().multiply(1.4);
 			vec.setY(0.25);
 			entity.setVelocity(vec);
 		}
-		if (damager.getPassenger().getType() == EntityType.DROPPED_ITEM && damager.getType() == EntityType.ARROW){
+		if (damager.getPassenger() != null && damager.getPassenger().getType() == EntityType.DROPPED_ITEM && damager.getType() == EntityType.ARROW){
 			if (entity instanceof LivingEntity){
 				if (((Item) damager.getPassenger()).getItemStack().getType() == Material.ICE){
 					entity.getWorld().playSound(entity.getLocation(), Sound.SKELETON_HURT, 2, 0);
@@ -198,7 +200,7 @@ public class BossArcher extends Boss implements Listener{
 					entity.getWorld().playSound(entity.getLocation(), Sound.ZOMBIE_REMEDY, 4, 2);
 					ParticleEffect.SLIME.animateAtLocation(entity.getLocation(), 36, 1);
 					((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 80, 1));
-				} else if (((Item) damager.getPassenger()).getItemStack().getType() == Material.SPIDER_EYE){
+				} else if (((Item) damager.getPassenger()).getItemStack().getType() == Material.TNT){
 					damager.getWorld().createExplosion(damager.getLocation().getX(), damager.getLocation().getY(), damager.getLocation().getZ(), 2.5F, false, false);
 				}
 			}
@@ -210,11 +212,11 @@ public class BossArcher extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		Entity entity = event.getEntity();
-		if (entity.getUniqueId() == boss.getUniqueId()){
+		if (spawned && entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
 			if (boss.getKiller() != null){
-				if (r.nextInt(60) == 0){
+				if (r.nextInt(40) == 0){
 					NamedStack lunch = new NamedStack(ChatColor.RED + "Lunch Box", Material.TRAPPED_CHEST);
 					List<String> lunchLore = new ArrayList<String>();
 					lunchLore.add("Earned when killing the boss \"" + bossName + "\"");
@@ -258,10 +260,10 @@ public class BossArcher extends Boss implements Listener{
 			plugin.util.broadcastDelaySound(a_v + "It just lost my lunch because i forgot to train last month", Sound.BLAZE_BREATH, 1, timer += 60);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Why cant you just eat something else than meat??", Sound.VILLAGER_IDLE, 1, timer += 80);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Think about the ones you kill to get it", Sound.VILLAGER_HAGGLE, 1, timer += 70);
-			plugin.util.broadcastDelaySound(a_v + "As far as i know you dont really think that mutch about it before you kill an animal to get stuff", Sound.BLAZE_BREATH, 1, timer += 75);
+			plugin.util.broadcastDelaySound(a_v + "As far as i know you dont really think that much about it before you kill an animal to get stuff", Sound.BLAZE_BREATH, 1, timer += 75);
 			plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Your right but just because we dont it dosnt mean you cant think about it first", Sound.VILLAGER_YES, 1, timer += 80);
 			plugin.util.broadcastDelaySound(a_v + "I will keep doing it as you do with animals and stuff and i will come back after you another day", Sound.BLAZE_BREATH, 1, timer += 65);
-			plugin.util.broadcastDelaySound(a_v + "And when i come back i will be mutch stronger and will be able to take you down", Sound.BLAZE_BREATH, 1, timer += 68);
+			plugin.util.broadcastDelaySound(a_v + "And when i come back i will be much stronger and will be able to take you down", Sound.BLAZE_BREATH, 1, timer += 68);
 			new BukkitRunnable(){
 				public void run(){
 					plugin.stop();
@@ -271,13 +273,22 @@ public class BossArcher extends Boss implements Listener{
 	}
 	
 	
-	public void arrow(LivingEntity entity){
-		final Arrow arrow = entity.launchProjectile(Arrow.class);
+	public void arrows(final LivingEntity entity){
 		new BukkitRunnable(){
-			public void run() {
-				arrow.remove();
+			int times = r.nextInt(6) + 5;
+			public void run(){
+				final Arrow arrow = entity.launchProjectile(Arrow.class);
+				new BukkitRunnable(){
+					public void run() {
+						arrow.remove();
+					}
+				}.runTaskLater(plugin, 200);
+				if (times < 0){
+					this.cancel();
+				}
+				times--;
 			}
-		}.runTaskLater(plugin, 200);
+		}.runTaskTimer(plugin, 0, 10);
 	}
 	
 	

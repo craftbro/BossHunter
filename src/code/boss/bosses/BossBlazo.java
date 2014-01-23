@@ -95,6 +95,9 @@ public class BossBlazo extends Boss implements Listener{
 	
 	public void tick(){
 		if (spawned){
+			if(!boss.getLocation().getChunk().isLoaded()){
+				boss.getLocation().getChunk().load();
+			}
 			if (attacks >= 1){
 				if (r.nextInt(185) == 0){
 					fireball(boss);
@@ -178,7 +181,7 @@ public class BossBlazo extends Boss implements Listener{
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
 		if (minions.contains(event.getDamager())){
 			ParticleEffect.FLAME.animateAtLocation(event.getEntity().getLocation(), 50, 1);
-			event.getEntity().setVelocity(event.getEntity().getVelocity().subtract(new Vector(0, r.nextInt(153) / 100, 0)));
+			event.getEntity().setVelocity(event.getEntity().getVelocity().subtract(new Vector(0, (150 + r.nextInt(101)) / 100, 0)));
 			event.getEntity().setFireTicks(event.getEntity().getFireTicks() + 15);
 			minions.remove(event.getDamager());
 			event.getDamager().remove();
@@ -199,7 +202,7 @@ public class BossBlazo extends Boss implements Listener{
 			spawned = false;
 			timer = 0;
 			if (boss.getKiller() != null){
-				if (r.nextInt(60) == 0){
+				if (r.nextInt(40) == 0){
 					NamedStack friend = new NamedStack(ChatColor.GREEN + "Friend Request", Material.PAPER);
 					List<String> friendLore = new ArrayList<String>();
 					friendLore.add("Earned when killing the boss \"" + bossName + "\"");

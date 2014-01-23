@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,6 +20,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import code.boss.bosses.arenas.Arena;
+import code.boss.bosses.arenas.ArenaArcher;
 import code.boss.bosses.arenas.ArenaBeast;
 import code.boss.bosses.arenas.ArenaBlazo;
 import code.boss.bosses.arenas.ArenaGolem;
@@ -151,9 +153,13 @@ public class main extends JavaPlugin implements Listener{
 		
 		util.copyWorld().setGameRuleValue("keepInventory", "true");
 		
-		Bukkit.createWorld(new WorldCreator("worldB")).setGameRuleValue("keepInventory", "true");
+		World world = Bukkit.createWorld(new WorldCreator("worldB"));
+		world.setGameRuleValue("keepInventory", "true");
+		world.setGameRuleValue("doMobSpawning", "false");
+		world.setGameRuleValue("mobGriefing", "false");
+		world.setGameRuleValue("doMobLoot", "false");
 		
-		arena = new ArenaBlazo(this);
+		arena = new ArenaArcher(this);
 		
 		
 

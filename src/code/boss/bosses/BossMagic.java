@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.Warning;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Entity;
@@ -33,8 +34,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -51,6 +55,8 @@ import code.boss.main.main;
  * The class of the boss "Magical Queen"
  * @author rasmusrune
  */
+@Deprecated
+@Warning(value=true,reason="This Boss Dosnt Work")
 public class BossMagic extends Boss implements Listener{
 	public static final List<Entity> captured = new ArrayList<Entity>();
 	static int attacks = 0;
@@ -100,17 +106,14 @@ public class BossMagic extends Boss implements Listener{
 		new BukkitRunnable(){
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("world"), 101, 98, 198), EntityType.WITCH);
-				boss.setMaxHealth(250);
-				boss.setHealth(250);
+				boss.setMaxHealth(400);
+				boss.setHealth(400);
 				boss.setCustomName(ChatColor.LIGHT_PURPLE + "Magical Queen");
 				boss.setCustomNameVisible(true);
 				attacks = 1;
 				spawned = true;
 			}
 		}.runTaskLater(plugin, timer += 50);
-		plugin.util.broadcastDelaySound(r_b + "I found out something! You can't attack it normally", Sound.DONKEY_IDLE, 1, timer += 190);
-		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "How do we do it then?", Sound.VILLAGER_YES, 1, timer += 70);
-		plugin.util.broadcastDelaySound(r_b + "You need to kill the red and green orbs to damage it", Sound.DONKEY_IDLE, 1, timer += 60);
 		timer = 0;
 	}
 	
@@ -127,30 +130,33 @@ public class BossMagic extends Boss implements Listener{
 			}
 		}
 		if (spawned){
+			if(!boss.getLocation().getChunk().isLoaded()){
+				boss.getLocation().getChunk().load();
+			}
 			if (attacks >= 1){
-				if (r.nextInt(170) == 0){
+				if (r.nextInt(260) == 0){
 					if (minions.size() < 10){
-						for (int x = r.nextInt(6) + 5; x > 0; x--){
+						for (int x = r.nextInt(4) + 2; x > 0; x--){
 							minions(boss.getLocation());
 						}
 					}
 				}
-				if (r.nextInt(100) == 0){
+				if (r.nextInt(95) == 0){
 					potion(boss);
 				}
 			}
 			if (attacks >= 2){
-				if (r.nextInt(260) == 0){
+				if (r.nextInt(290) == 0){
 					undead(boss.getLocation());
 				}
 			}
 			if (attacks >= 3){
-				if (r.nextInt(290) == 0){
+				if (r.nextInt(310) == 0){
 					batbomb(boss.getEyeLocation());
 				}
 			}
 			if (attacks >= 4){
-				if (r.nextInt(350) == 0){
+				if (r.nextInt(355) == 0){
 					if (((Witch) boss).getTarget() != null){
 						if (((Witch) boss).getTarget() instanceof Player){
 							whirlwind(((Witch) boss).getTarget());
@@ -163,12 +169,12 @@ public class BossMagic extends Boss implements Listener{
 				}
 			}
 			if (attacks >= 5){
-				if (r.nextInt(270) == 0){
+				if (r.nextInt(280) == 0){
 					capture(randomPlayer());
 				}
 			}
 			if (attacks >= 6){
-				if (r.nextInt(300) == 0){
+				if (r.nextInt(320) == 0){
 					final Player target = plugin.util.getNearest(boss);
 					for (int x = r.nextInt(11) + 25; x > 0; x--){
 						new BukkitRunnable(){
@@ -208,18 +214,18 @@ public class BossMagic extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
-		if (entity.getUniqueId() == boss.getUniqueId()){
-			if (boss.getHealth() <= 230 && !optimized1){
+		if (spawned && entity.getUniqueId() == boss.getUniqueId()){
+			if (boss.getHealth() / 400 <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
 				plugin.util.broadcastDelaySound(r_b + "I would just like to warn you. My radar say you are on multiple locations", Sound.DONKEY_IDLE, 1, 4);
 				undead(boss.getLocation());
 			}
-			if (boss.getHealth() <= 190 && !optimized2){
+			if (boss.getHealth() / 400 <= 65 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (boss.getHealth() <= 130 && !optimized3){
+			if (boss.getHealth() / 400 <= 60 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 				plugin.util.broadcastDelaySound(r_b + "I'm detecting a strong wind energy! Might be strong enough to blow someone up in the air", Sound.DONKEY_IDLE, 1, 10);
@@ -228,17 +234,13 @@ public class BossMagic extends Boss implements Listener{
 				}
 				plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We already know it", Sound.VILLAGER_NO, 1, 60);
 			}
-			if (boss.getHealth() <= 90 && !optimized4){
+			if (boss.getHealth() / 400 <= 50 && !optimized4){
 				optimized4 = true;
 				attacks = 5;
 			}
-			if (boss.getHealth() <= 90 && !optimized5){
+			if (boss.getHealth() / 400 <= 40 && !optimized5){
 				optimized5 = true;
 				attacks = 6;
-			}
-			if (event.getCause() != DamageCause.WITHER){
-				event.setCancelled(true);
-				ParticleEffect.CLOUD.animateAtLocation(entity.getLocation(), 50, 1);
 			}
 		} else if (entity.getType() == EntityType.BAT){
 			if (event.getCause() != DamageCause.ENTITY_ATTACK){
@@ -254,6 +256,15 @@ public class BossMagic extends Boss implements Listener{
 	
 	
 	@EventHandler
+	public void onEntityRegainHealth(EntityRegainHealthEvent event){
+		if (boss != null && event.getEntity().getUniqueId() == boss.getUniqueId()){
+			event.setCancelled(true);
+		}
+	}
+	
+	
+	
+	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		LivingEntity entity = event.getEntity();
 		//gets if the dead entity was a minion
@@ -262,7 +273,7 @@ public class BossMagic extends Boss implements Listener{
 			if (entity.getEquipment().getHelmet().getType() == Material.SKULL_ITEM){
 				OfflinePlayer player = Bukkit.getPlayer(((SkullMeta) entity.getEquipment().getHelmet().getItemMeta()).getOwner());
 				if (player instanceof Player){
-					((Player) player).damage(8);
+					((Player) player).damage(3);
 					ParticleEffect.LARGE_SMOKE.animateAtLocation(((Entity) player).getLocation(), 5, 1);
 				}
 			}
@@ -272,7 +283,7 @@ public class BossMagic extends Boss implements Listener{
 					boss.setNoDamageTicks(0);
 					boss.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 1, 1));
 					if (entity.getKiller() != null){
-						if (r.nextInt(600) == 0){
+						if (r.nextInt(500) == 0){
 							if (entity.getType() == EntityType.SLIME){
 								NamedStack greenOrb = new NamedStack(ChatColor.GREEN + "Green Orb", Material.SLIME_BALL);
 								List<String> redLore = new ArrayList<String>();
@@ -294,11 +305,11 @@ public class BossMagic extends Boss implements Listener{
 			}
 		//} else if (entity == boss){
 		// use this, is safer	
-		} else if(entity.getUniqueId() == boss.getUniqueId()){
+		} else if (boss != null && entity.getUniqueId() == boss.getUniqueId()){
 			spawned = false;
 			timer = 0;
 			if (boss.getKiller() != null){
-				if (r.nextInt(60) == 0){
+				if (r.nextInt(40) == 0){
 					NamedStack wand = new NamedStack(ChatColor.LIGHT_PURPLE + "Magical Queen's Wand", Material.BLAZE_ROD);
 					List<String> wandLore = new ArrayList<String>();
 					wandLore.add("Earned when killing the boss \"Magical Queen\"");
@@ -393,16 +404,21 @@ public class BossMagic extends Boss implements Listener{
 		if (spawned){
 			ThrownPotion potion = entity.launchProjectile(ThrownPotion.class);
 			potion.getEffects().clear();
+			PotionMeta meta = (PotionMeta) potion.getItem().getItemMeta();
+			meta.clearCustomEffects();
 			int rEffect = r.nextInt(4);
 			if (rEffect == 0){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190, 0));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 190, 0), true);
 			} else if (rEffect == 1){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160, 0));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 0), true);
 			} else if (rEffect == 2){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, 99));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 150, 99), true);
 			} else if (rEffect == 3){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140, 2));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 140, 2), true);
 			}
+			ItemStack item = potion.getItem();
+			item.setItemMeta(meta);
+			potion.setItem(item);
 		}
 	}
 	
@@ -413,7 +429,7 @@ public class BossMagic extends Boss implements Listener{
 				Skeleton undead = loc.getWorld().spawn(loc, Skeleton.class);
 				undead.setMaximumNoDamageTicks(r.nextInt(20) + 1);
 				undead.setNoDamageTicks(undead.getMaximumNoDamageTicks());
-				undead.setCustomName(ChatColor.GREEN + "Green Orb");
+				undead.setCustomName(ChatColor.GRAY + "Undead");
 				undead.setCustomNameVisible(true);
 				undead.setRemoveWhenFarAway(false);
 				undead.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 99999999, 0));
@@ -456,11 +472,11 @@ public class BossMagic extends Boss implements Listener{
 				public void run(){
 					LivingEntity chicken = (LivingEntity) entity.getWorld().spawnEntity(entity.getLocation(), EntityType.CHICKEN);
 					chicken.setMaxHealth(r.nextInt(11) + 5);
-					chicken.setHealth(10);
+					chicken.setHealth(chicken.getMaxHealth());
 					chicken.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999999, 0));
-					entity.setPassenger(chicken);
+					chicken.setPassenger(entity);
 				}
-			}, 15 * 4);
+			}, (15 * 4) + 2);
 		}
 	}
 	
@@ -472,12 +488,12 @@ public class BossMagic extends Boss implements Listener{
 		};
 		List<Block> blocks = new ArrayList<Block>();
 		final Location minLoc = loc.clone();
-		minLoc.setX(minLoc.getX() - 2);
-		minLoc.setY(minLoc.getY() - 2);
-		minLoc.setZ(minLoc.getZ() - 2);
+		minLoc.setX(minLoc.getX() - 1);
+		minLoc.setY(minLoc.getY() - 1);
+		minLoc.setZ(minLoc.getZ() - 1);
 		final Location maxLoc = loc.clone();
 		maxLoc.setX(maxLoc.getX() + 2);
-		maxLoc.setY(maxLoc.getY() + 2);
+		maxLoc.setY(maxLoc.getY() + 3);
 		maxLoc.setZ(maxLoc.getZ() + 2);
 		captured.add(entity);
 		int num = -1;
@@ -523,48 +539,53 @@ public class BossMagic extends Boss implements Listener{
 		if (spawned){
 			ThrownPotion potion = shooter.launchProjectile(ThrownPotion.class);
 			potion.getEffects().clear();
+			PotionMeta meta = (PotionMeta) potion.getItem().getItemMeta();
+			meta.clearCustomEffects();
 			int rEffect1 = r.nextInt(4);
 			int rEffect2 = r.nextInt(3);
 			if (rEffect1 == 0){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190, 0));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 190, 0), true);
 				if (rEffect2 == 0){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0), true);
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99), true);
 				} else if (rEffect2 == 2){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2), true);
 				}
 			} else if (rEffect1 == 1){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160, 0));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 160, 0), true);
 				if (rEffect2 == 0){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0), true);
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99), true);
 				} else if (rEffect2 == 2){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2), true);
 				}
 			} else if (rEffect1 == 2){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150, 99));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 150, 99), true);
 				if (rEffect2 == 0){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0), true);
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0), true);
 				} else if (rEffect2 == 2){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 140 / 2, 2), true);
 				}
 			} else if (rEffect1 == 3){
-				potion.getEffects().add(new PotionEffect(PotionEffectType.SLOW, 140, 2));
+				meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 140, 2), true);
 				if (rEffect2 == 0){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 190 / 2, 0), true);
 				} else if (rEffect2 == 1){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 160 / 2, 0), true);
 				} else if (rEffect2 == 2){
-					potion.getEffects().add(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99));
+					meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 150 / 2, 99), true);
 				}
 			}
 			Vector vec = target.getLocation().toVector().subtract(shooter.getLocation().toVector());
 			vec.setY(vec.getY() * 2.5);
 			potion.setVelocity(vec);
+			ItemStack item = potion.getItem();
+			item.setItemMeta(meta);
+			potion.setItem(item);
 		}
 	}
 	

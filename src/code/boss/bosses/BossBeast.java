@@ -17,7 +17,6 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.Warning;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftVillager;
 import org.bukkit.entity.Entity;
@@ -31,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -39,6 +39,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
 
 
 
@@ -68,8 +69,6 @@ import code.boss.main.main;
  * The class of the boss "Beast"
  * @author rasmusrune
  */
-@Deprecated
-@Warning(value=true,reason="F*ck'd up")
 public class BossBeast extends Boss implements Listener{
 	static int attacks = 0;
 	public static int timer = 0;
@@ -127,6 +126,9 @@ public class BossBeast extends Boss implements Listener{
 	
 	public void tick(){
 		if (spawned){
+			if(!boss.getLocation().getChunk().isLoaded()){
+				boss.getLocation().getChunk().load();
+			}
 			if (attacks >= 1){
 				if (r.nextInt(215) == 0 && this.getMinionsSize() < 17){
 					for (int x = r.nextInt(6) + 1; x > 0; x--){
@@ -135,7 +137,7 @@ public class BossBeast extends Boss implements Listener{
 				}
 			}
 			if (attacks >= 2){
-				if (r.nextInt(260) == 0){
+				if (r.nextInt(280) == 0 && this.getMinionsSize() < 24){
 					call(boss.getLocation());
 				}
 			}
@@ -161,6 +163,13 @@ public class BossBeast extends Boss implements Listener{
 	}
 	
 	
+	
+	@EventHandler
+	public void onEntityCombust(EntityCombustEvent event){
+		event.setCancelled(true);
+	}
+	
+	
 	public static boolean optimized1 = false;
 	public static boolean optimized2 = false;
 	public static boolean optimized3 = false;
@@ -168,7 +177,7 @@ public class BossBeast extends Boss implements Listener{
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
-		if (spawned){
+		if (spawned && boss != null){
 			if (entity.getUniqueId() == boss.getUniqueId()){
 				for (ItemStack armor : boss.getEquipment().getArmorContents()){
 					armor.setDurability((short) 0);
@@ -209,11 +218,11 @@ public class BossBeast extends Boss implements Listener{
 						}
 					}, 140);
 				}
-				if (boss.getHealth() / 6.5 <= 50 && !optimized2){
+				if (spawned && boss.getHealth() / 6.5 <= 50 && !optimized2){
 					optimized2 = true;
 					attacks = 3;
 				}
-				if (boss.getHealth() / 6.5 <= 30 && !optimized3){
+				if (spawned && boss.getHealth() / 6.5 <= 30 && !optimized3){
 					optimized3 = true;
 					attacks = 4;
 				}
@@ -236,7 +245,7 @@ public class BossBeast extends Boss implements Listener{
 				spawned = false;
 				timer = 0;
 				if (boss.getKiller() != null){
-					if (r.nextInt(60) == 0){
+					if (r.nextInt(40) == 0){
 						NamedStack potato = new NamedStack(ChatColor.GOLD + "Mutated Potato", Material.BAKED_POTATO);
 						List<String> potatoLore = new ArrayList<String>();
 						potatoLore.add("Earned when killing the boss \"Beast\"");
@@ -258,6 +267,8 @@ public class BossBeast extends Boss implements Listener{
 						villager.setRemoveWhenFarAway(false);
 						villager.setCustomName(ChatColor.GREEN + "Mayor of Happy Town");
 						villager.setCustomNameVisible(true);
+						villager.setMaxHealth(99999);
+						villager.setHealth(99999);
 						mayorUuid = villager.getUniqueId();
 					}
 				}.runTaskLater(plugin, timer += 10);
@@ -333,6 +344,7 @@ public class BossBeast extends Boss implements Listener{
 											zombie.setVillager(false);
 										}
 										zombie.setRemoveWhenFarAway(false);
+										zombie.setHealth(r.nextInt(7) + 5);
 										deadVillagers++;
 										minions.add(zombie);
 									}
@@ -386,7 +398,7 @@ public class BossBeast extends Boss implements Listener{
 					if (entity.getUniqueId() == target.getUniqueId()){
 						currentLoc.getWorld().playSound(currentLoc, Sound.FIZZ, 4, 0.7F);
 						if (target instanceof LivingEntity){
-							((LivingEntity) target).damage(99E99);
+							((LivingEntity) target).damage(((LivingEntity) target).getHealth() / 1.4);
 						} else {
 							target.remove();
 						}
