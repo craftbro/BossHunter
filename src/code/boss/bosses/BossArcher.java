@@ -66,7 +66,7 @@ public class BossArcher extends Boss implements Listener{
 					online.getWorld().playSound(online.getLocation(), Sound.ARROW_HIT, 1, 1);
 					online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999999, 2));
 					online.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999999, 9));
-					online.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999999, 99));
+					online.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999999, -6));
 				}
 			}
 		}.runTaskLater(plugin, timer += 80);
