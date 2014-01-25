@@ -26,6 +26,7 @@ import code.boss.bosses.arenas.ArenaBlazo;
 import code.boss.bosses.arenas.ArenaGolem;
 import code.boss.bosses.arenas.ArenaMagic;
 import code.boss.bosses.arenas.ArenaPig;
+import code.boss.bosses.arenas.ArenaUnknown;
 import code.boss.game.Game;
 import code.boss.item.SkullStack;
 import code.boss.player.PlayerManager;
@@ -159,7 +160,7 @@ public class main extends JavaPlugin implements Listener{
 		world.setGameRuleValue("mobGriefing", "false");
 		world.setGameRuleValue("doMobLoot", "false");
 		
-		arena = new ArenaArcher(this);
+		arena = new ArenaUnknown(this);
 		
 		
 

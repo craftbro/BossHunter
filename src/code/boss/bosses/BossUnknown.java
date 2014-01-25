@@ -36,6 +36,10 @@ import org.bukkit.util.Vector;
 import code.boss.effect.ParticleEffect;
 import code.boss.main.main;
 
+/**
+ * The class of the boss "Unknown" (his real name is "Squiddy")
+ * @author rasmusrune
+ */
 public class BossUnknown extends Boss implements Listener{
 	static int attacks = 0;
 	public static int timer = 0;
@@ -57,7 +61,7 @@ public class BossUnknown extends Boss implements Listener{
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 0, 61, 0), EntityType.SQUID);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, -19, -1130), EntityType.SQUID);
 				boss.setMaxHealth(525);
 				boss.setHealth(525);
 				boss.setCustomName(ChatColor.BLUE + "Shield");
@@ -77,12 +81,16 @@ public class BossUnknown extends Boss implements Listener{
 				boss.getLocation().getChunk().load();
 			}
 			if (shield){
-				if (r.nextInt(223) == 0){
-					spawnShieldFragment(randomPlayer().getLocation());
+				if (r.nextInt(180) == 0){
+					if (fragments.size() < 10){
+						spawnShieldFragment(randomPlayer().getLocation());
+					}
 				}
 				if (attacks >= 1){
-					if (r.nextInt(270) == 0){
-						wolfs(randomPlayer());
+					if (r.nextInt(250) == 0){
+						if (getMinionsSize() < 7){
+							wolfs(randomPlayer());
+						}
 					}
 				}
 				if (attacks >= 2){
@@ -113,6 +121,10 @@ public class BossUnknown extends Boss implements Listener{
 		}
 	}
 	
+	public static boolean optimized1 = false;
+	public static boolean optimized2 = false;
+	public static boolean optimized3 = false;
+	public static boolean optimized4 = false;
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
@@ -123,6 +135,22 @@ public class BossUnknown extends Boss implements Listener{
 				} else if (event.getCause() != null && event.getCause() == DamageCause.SUFFOCATION){
 					event.setCancelled(true);
 				}
+			}
+			if (spawned && boss.getHealth() / 5.25 <= 80 && !optimized1){
+				optimized1 = true;
+				attacks = 2;
+			}
+			if (spawned && boss.getHealth() / 5.25 <= 60 && !optimized2){
+				optimized2 = true;
+				attacks = 3;
+			}
+			if (spawned && boss.getHealth() / 5.25 <= 40 && !optimized3){
+				optimized3 = true;
+				attacks = 4;
+			}
+			if (spawned && boss.getHealth() / 5.25 <= 30 && !optimized4){
+				optimized4 = true;
+				attacks = 5;
 			}
 		}
 	}
@@ -156,7 +184,7 @@ public class BossUnknown extends Boss implements Listener{
 						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
-								boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getLocation(), EntityType.SQUID);
+								boss.setHealth(0);
 								boss.setMaxHealth(20);
 								boss.setHealth(20);
 								boss.setCustomName(ChatColor.BLUE + "Squiddy");
@@ -171,7 +199,7 @@ public class BossUnknown extends Boss implements Listener{
 						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
-								boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getLocation(), EntityType.SQUID);
+								boss.setHealth(0);
 								boss.setMaxHealth(10);
 								boss.setHealth(10);
 								boss.setCustomName(ChatColor.BLUE + "Squiddy");
