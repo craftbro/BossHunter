@@ -103,8 +103,8 @@ public class BossArcher extends Boss implements Listener{
 				boss.setCustomName(ChatColor.GREEN + "Archer King");
 				boss.setCustomNameVisible(true);
 				boss.setRemoveWhenFarAway(false);
-				boss.setMaxHealth(600);
-				boss.setHealth(600);
+				boss.setMaxHealth(600 * Bukkit.getOnlinePlayers().length);
+				boss.setHealth(boss.getMaxHealth());
 				spawned = true;
 				attacks = 1;
 			}
@@ -160,19 +160,19 @@ public class BossArcher extends Boss implements Listener{
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
 		if (spawned && entity.getUniqueId() == boss.getUniqueId()){
-			if (boss.getHealth() / 6 <= 80 && !optimized1){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
 			}
-			if (boss.getHealth() / 6 <= 70 && !optimized2){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 70 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (boss.getHealth() / 6 <= 50 && !optimized3){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 50 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 			}
-			if (boss.getHealth() / 6 <= 40 && !optimized4){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 40 && !optimized4){
 				optimized4 = true;
 				attacks = 5;
 			}

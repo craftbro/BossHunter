@@ -184,7 +184,6 @@ public class BossUnknown extends Boss implements Listener{
 						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
-								boss.setHealth(0);
 								boss.setMaxHealth(20);
 								boss.setHealth(20);
 								boss.setCustomName(ChatColor.BLUE + "Squiddy");
@@ -199,7 +198,6 @@ public class BossUnknown extends Boss implements Listener{
 						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
-								boss.setHealth(0);
 								boss.setMaxHealth(10);
 								boss.setHealth(10);
 								boss.setCustomName(ChatColor.BLUE + "Squiddy");
