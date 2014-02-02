@@ -1,5 +1,6 @@
 package code.boss.bosses;
 
+import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
@@ -317,7 +319,7 @@ public class BossUnnamed  extends Boss implements Listener{
 	public void secondAttack(int id, final Entity target, final Entity attacker){
 		switch (id){
 		case 0:
-			final Vector vec = target.getLocation().getDirection().multiply(0.5);
+			final Vector vec = target.getLocation().getDirection().normalize().multiply(0.5);
 			vec.setY(0);
 			new BukkitRunnable(){
 				int timer = r.nextInt(101) + 50;
@@ -356,20 +358,54 @@ public class BossUnnamed  extends Boss implements Listener{
 			}.runTaskLater(plugin, 45);
 			break;
 		case 3:
-			
+			Location loc = target.getLocation();
+			Vector velectory = target.getVelocity();
+			loc.setYaw(loc.getYaw() - 180);
+			target.teleport(loc);
+			target.setVelocity(velectory);
 			break;
 		case 4:
-			
+			new BukkitRunnable(){
+				int timer = 0;
+				public void run(){
+					if (target.isOnGround()){
+						timer++;
+						Vector vec = attacker.getLocation().getDirection().normalize().multiply(0.6);
+						vec.setY(0);
+						if (timer > 105){
+							this.cancel();
+						}
+					}
+				}
+			}.runTaskTimer(plugin, 0, 1);
 			break;
 		}
 	}
 	public void thirdAttack(int id, Entity target, Entity attacker){
 		switch (id){
 		case 0:
-			
+			Vector vec = target.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize().multiply(0.25);
+			int timer = 0;
+			Location loc = attacker.getLocation();
+			while (true){
+				timer++;
+				Location currentLoc = loc.add(vec);
+				ParticleEffect.RED_DUST.animateAtLocation(currentLoc, 2, 0);
+				target.setFireTicks(target.getFireTicks() + 115);
+				if (timer > 100){
+					break;
+				}
+				if (!currentLoc.getBlock().isEmpty()){
+					break;
+				}
+			}
 			break;
 		case 1:
-			
+			new BukkitRunnable(){
+				public void run(){
+					
+				}
+			}.runTaskTimer(plugin, 0, 1);
 			break;
 		case 2:
 			
