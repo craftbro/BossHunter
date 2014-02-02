@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -17,9 +18,12 @@ import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,6 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import code.boss.effect.ParticleEffect;
+import code.boss.effect.ras.RasEffect;
 import code.boss.main.main;
 
 /**
@@ -48,7 +53,7 @@ public class BossUnnamed  extends Boss implements Listener{
 	Random r = new Random();
 
 	public byte[] attackSet = new byte[]{
-		(byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(5)
+		(byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(3), (byte) r.nextInt(2)
 	};
 	
 	public BossUnnamed(main m){
@@ -79,28 +84,28 @@ public class BossUnnamed  extends Boss implements Listener{
 	public void tick(){
 		if (spawned){
 			if (attacks >= 1){
-				if (r.nextInt(250) == 0){
+				if (r.nextInt(230) == 0){
 					firstAttack(attackSet[0], boss);
 				}
 			}
 			if (attacks >= 2){
-				if (r.nextInt(320) == 0){
+				if (r.nextInt(280) == 0){
 					secondAttack(attackSet[1], randomPlayer(), boss);
 				}
 			}
 			if (attacks >= 3){
-				if (r.nextInt(190) == 0){
+				if (r.nextInt(320) == 0){
 					thirdAttack(attackSet[2], randomPlayer(), boss);
 				}
 			}
 			if (attacks >= 4){
-				if (r.nextInt(275) == 0){
+				if (r.nextInt(350) == 0){
 					attackFour(attackSet[3], randomPlayer(), boss);
 				}
 			}
 			if (attacks >= 5){
-				if (r.nextInt(340) == 0){
-					attackFive(attackSet[4], randomPlayer(), boss);
+				if (r.nextInt(375) == 0){
+					attackFive(attackSet[4], boss);
 				}
 			}
 		}
@@ -241,6 +246,15 @@ public class BossUnnamed  extends Boss implements Listener{
 		}
 	}
 	
+	
+	
+	@EventHandler
+	public void onBlockIgnite(BlockIgniteEvent event){
+		if (event.getCause() != IgniteCause.ENDER_CRYSTAL){
+			event.setCancelled(true);
+		}
+	}
+	
 	public void firstAttack(int id, Entity attacker){
 		switch (id){
 		case 0:
@@ -316,6 +330,7 @@ public class BossUnnamed  extends Boss implements Listener{
 			break;
 		}
 	}
+	
 	public void secondAttack(int id, final Entity target, final Entity attacker){
 		switch (id){
 		case 0:
@@ -381,7 +396,8 @@ public class BossUnnamed  extends Boss implements Listener{
 			break;
 		}
 	}
-	public void thirdAttack(int id, Entity target, Entity attacker){
+	
+	public void thirdAttack(int id, Entity target, final Entity attacker){
 		switch (id){
 		case 0:
 			Vector vec = target.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize().multiply(0.25);
@@ -402,57 +418,204 @@ public class BossUnnamed  extends Boss implements Listener{
 			break;
 		case 1:
 			new BukkitRunnable(){
+				int timer = 0;
 				public void run(){
-					
+					timer++;
+					if (attacker instanceof LivingEntity){
+						SmallFireball fireball = ((LivingEntity) attacker).launchProjectile(SmallFireball.class);
+						fireball.setIsIncendiary(false);
+					}
+					if (timer > 25){
+						this.cancel();
+					}
 				}
 			}.runTaskTimer(plugin, 0, 1);
 			break;
 		case 2:
-			
+			new BukkitRunnable(){
+				int timer = 0;
+				public void run(){
+					Iterator<Entity> itr = attacker.getNearbyEntities(6, 6, 6).iterator();
+					while (itr.hasNext()){
+						Entity entity = itr.next();
+						entity.setVelocity(entity.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize().multiply(0.3));
+					}
+					if (timer > 140){
+						this.cancel();
+						Iterator<Entity> itr2 = attacker.getNearbyEntities(4.5, 4.5, 4.5).iterator();
+						while (itr2.hasNext()){
+							Entity entity = itr2.next();
+							entity.setFireTicks(entity.getFireTicks() + 70);
+						}
+					}
+				}
+			}.runTaskTimer(plugin, 0, 1);
 			break;
 		case 3:
-			
+			new BukkitRunnable(){
+				int timer = 0;
+				public void run(){
+					RasEffect.ANGRY_VILLAGER.display(attacker.getLocation(), (float) 0.6, (float) 0.6, (float) 0.6, 1, 10);
+					Iterator<Entity> itr = attacker.getNearbyEntities(6, 6, 6).iterator();
+					while (itr.hasNext()){
+						Entity entity = itr.next();
+						if (entity instanceof Damageable){
+							((Damageable) entity).damage(1);
+						}
+					}
+					if (timer > 140){
+						this.cancel();
+					}
+				}
+			}.runTaskTimer(plugin, 0, 1);
 			break;
 		case 4:
-			
+			Location tLoc = target.getLocation();
+			Location aLoc = attacker.getLocation();
+			target.teleport(aLoc);
+			attacker.teleport(tLoc);
 			break;
 		}
 	}
-	public void attackFour(int id, Entity target, Entity attacker){
+	
+	public void attackFour(int id, final Entity target, final Entity attacker){
 		switch (id){
 		case 0:
-			
+			if (target instanceof Damageable){
+				((Damageable) target).damage(6 * Bukkit.getOnlinePlayers().length);
+			}
 			break;
 		case 1:
-			
+			new BukkitRunnable(){
+				int timer = 0;
+				Slime slime = target.getWorld().spawn(target.getLocation(), Slime.class);
+				public void run(){
+					timer = timer + r.nextInt(7) + 17;
+					slime.setMaxHealth(999);
+					slime.setHealth(999);
+					target.setPassenger(slime);
+					ParticleEffect.PORTAL.animateAtLocation(slime.getLocation(), 25, (float) 0.75);
+					if (!target.isValid() || target.isDead()){
+						this.cancel();
+						if (target instanceof LivingEntity){
+							((LivingEntity) target).removePotionEffect(PotionEffectType.CONFUSION);
+							((LivingEntity) target).removePotionEffect(PotionEffectType.SLOW);
+						}
+						slime.remove();
+						minions.remove(slime);
+					}
+					if (target instanceof Damageable){
+						((Damageable) target).damage(r.nextInt(3) + 1);
+						if (target instanceof LivingEntity){
+							((LivingEntity) target).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 999999, 0));
+							((LivingEntity) target).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999, 2));
+						}
+					}
+					if (timer > r.nextInt(96) + 85){
+						this.cancel();
+						if (target instanceof LivingEntity){
+							((LivingEntity) target).removePotionEffect(PotionEffectType.CONFUSION);
+							((LivingEntity) target).removePotionEffect(PotionEffectType.SLOW);
+						}
+						slime.remove();
+						minions.remove(slime);
+					}
+				}
+			}.runTaskTimer(plugin, 0, 20);
 			break;
 		case 2:
-			
-			break;
-		case 3:
-			
-			break;
-		case 4:
-			
+			final Location aLoc = attacker.getLocation();
+			Location tLoc = target.getLocation();
+			final Vector vec = tLoc.toVector().subtract(aLoc.toVector()).normalize().multiply(0.06);
+			new BukkitRunnable(){
+				int counter = 0;
+				Location currentLoc = aLoc.add(vec);
+				
+				public void run() {
+					counter++;
+					Location tLoc = target.getLocation();
+					Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize().multiply(0.6);
+					currentLoc = aLoc.add(vec);
+					attacker.setVelocity(vec);
+					Iterator<Entity> itr = attacker.getNearbyEntities(1, 1, 1).iterator();
+					while (itr.hasNext()){
+						Entity entity2 = itr.next();
+						if (entity2.getUniqueId() == target.getUniqueId()){
+							currentLoc.getWorld().playSound(currentLoc, Sound.EXPLODE, 7, 0);
+							if (target instanceof LivingEntity){
+								((LivingEntity) target).damage(8);
+							}
+							RasEffect.LARGE_EXPLODE.display(currentLoc, 2, 2, 2, 1, 70);
+							target.setVelocity(tLoc.toVector().subtract(aLoc.toVector()).normalize().multiply(2));
+							this.cancel();
+							break;
+						}
+					}
+					if (counter >= 400){
+						this.cancel();
+					}
+				}
+			}.runTaskTimer(plugin, 0, 1);
 			break;
 		}
 	}
-	public void attackFive(int id, Entity target, Entity attacker){
+	
+	public void attackFive(int id, Entity attacker){
 		switch (id){
 		case 0:
-			
+			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 250, 7);
+			for (Player target2 : Bukkit.getOnlinePlayers()){
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 1));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 9));
+				ParticleEffect.FIREWORK_SPARK.animateAtLocation(target2.getLocation(), 10, (float) 1.5);
+			}
 			break;
 		case 1:
-			
-			break;
-		case 2:
-			
-			break;
-		case 3:
-			
-			break;
-		case 4:
-			
+			for (final Player target : Bukkit.getOnlinePlayers()){
+				final Location sLoc = target.getLocation();
+				Location tLoc = target.getLocation();
+				sLoc.setY(sLoc.getY() + 100);
+				final Vector vec = tLoc.toVector().subtract(sLoc.toVector()).normalize();
+				vec.setY(-0.5);
+				new BukkitRunnable(){
+					int counter = 0;
+					Location currentLoc = sLoc.add(vec);
+					
+					public void run() {
+						Location tLoc = target.getLocation();
+						Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize();
+						vec.setY(-0.5);
+						currentLoc = sLoc.add(vec);
+						ParticleEffect.ENCHANTMENT_TABLE.animateAtLocation(currentLoc, 1, 1);
+						if (counter >= 40){
+							counter = 0;
+							ParticleEffect.CLOUD.animateAtLocation(currentLoc, 10, 1);
+						}
+						counter++;
+						Item item = currentLoc.getWorld().dropItem(currentLoc, new ItemStack(Material.SUGAR));
+						item.setPickupDelay(99999);
+						Iterator<Entity> itr = item.getNearbyEntities(1, 1, 1).iterator();
+						item.remove();
+						while (itr.hasNext()){
+							Entity entity = itr.next();
+							if (entity.getUniqueId() == target.getUniqueId()){
+								currentLoc.getWorld().playSound(currentLoc, Sound.AMBIENCE_THUNDER, 4, 1);
+								target.setFireTicks(target.getFireTicks() + 65);
+								target.damage(8);
+								this.cancel();
+								break;
+							}
+						}
+						if (!currentLoc.getBlock().isEmpty() && !currentLoc.getBlock().isLiquid()){
+							currentLoc.getWorld().playSound(currentLoc, Sound.AMBIENCE_THUNDER, 4, 1);
+							target.setFireTicks(target.getFireTicks() + 65);
+							target.damage(8);
+							this.cancel();
+						}
+					}
+				}.runTaskTimer(plugin, 0, 1);
+			}
 			break;
 		}
 	}
