@@ -27,8 +27,11 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -87,8 +90,8 @@ public class BossUnknown extends Boss implements Listener{
 					}
 				}
 				if (attacks >= 1){
-					if (r.nextInt(250) == 0){
-						if (getMinionsSize() < 7){
+					if (r.nextInt(270) == 0){
+						if (getMinionsSize() < 5){
 							wolfs(randomPlayer());
 						}
 					}
@@ -121,6 +124,15 @@ public class BossUnknown extends Boss implements Listener{
 		}
 	}
 	
+	
+	@EventHandler
+	public void onSlimeSplit(CreatureSpawnEvent event){
+		if (event.getSpawnReason() == SpawnReason.SLIME_SPLIT){
+			event.setCancelled(true);
+		}
+	}
+	
+	
 	public static boolean optimized1 = false;
 	public static boolean optimized2 = false;
 	public static boolean optimized3 = false;
@@ -130,9 +142,7 @@ public class BossUnknown extends Boss implements Listener{
 	public void onEntityDamage(EntityDamageEvent event){
 		if (spawned){
 			if (event.getEntity().getUniqueId() == boss.getUniqueId()){
-				if (shield){
-					event.setCancelled(true);
-				} else if (event.getCause() != null && event.getCause() == DamageCause.SUFFOCATION){
+				if (event.getCause() != null && event.getCause() == DamageCause.SUFFOCATION){
 					event.setCancelled(true);
 				}
 			}
@@ -158,7 +168,7 @@ public class BossUnknown extends Boss implements Listener{
 	
 	
 	@EventHandler
-	public void onEntityDeath(EntityDamageEvent event){
+	public void onEntityDeath(EntityDeathEvent event){
 		if (spawned){
 			if (boss.getUniqueId() == event.getEntity().getUniqueId()){
 				spawned = false;
@@ -186,10 +196,6 @@ public class BossUnknown extends Boss implements Listener{
 							public void run(){
 								boss.setMaxHealth(20);
 								boss.setHealth(20);
-								boss.setCustomName(ChatColor.BLUE + "Squiddy");
-								boss.setCustomNameVisible(true);
-								boss.setCanPickupItems(false);
-								boss.setRemoveWhenFarAway(false);
 								attacks = 1;
 								spawned = true;
 							}
@@ -200,10 +206,6 @@ public class BossUnknown extends Boss implements Listener{
 							public void run(){
 								boss.setMaxHealth(10);
 								boss.setHealth(10);
-								boss.setCustomName(ChatColor.BLUE + "Squiddy");
-								boss.setCustomNameVisible(true);
-								boss.setCanPickupItems(false);
-								boss.setRemoveWhenFarAway(false);
 								attacks = 1;
 								spawned = true;
 							}
@@ -217,16 +219,15 @@ public class BossUnknown extends Boss implements Listener{
 		if (minions.contains(event.getEntity())){
 			minions.remove(event.getEntity());
 		}
-		if (fragments.contains(event.getEntity())){
-			fragments.remove(event.getEntity());
+		if (event.getEntity() instanceof LivingEntity && ((LivingEntity) event.getEntity()).getCustomName() == ChatColor.BOLD + "Shield Fragment"){
 			if (event.getEntity() instanceof LivingEntity){
 				if (((LivingEntity) event.getEntity()).getKiller() != null){
-					damageWithEvent(event.getEntity(), r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, ((LivingEntity) event.getEntity()).getKiller(), true);
+					damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, ((LivingEntity) event.getEntity()).getKiller(), true);
 				} else {
-					damageWithEvent(event.getEntity(), r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
+					damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
 				}
 			} else {
-				damageWithEvent(event.getEntity(), r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
+				damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
 			}
 		}
 	}
@@ -436,26 +437,29 @@ public class BossUnknown extends Boss implements Listener{
 	
 	public void spawnShieldFragment(Location loc){
 		int rEnt = r.nextInt(6);
+		LivingEntity entity;
 		switch (rEnt){
 		case 0:
-			fragments.add(loc.getWorld().spawn(loc, Zombie.class));
+			entity = loc.getWorld().spawn(loc, Zombie.class);
 			break;
 		case 1:
-			fragments.add(loc.getWorld().spawn(loc, Slime.class));
+			entity = loc.getWorld().spawn(loc, Slime.class);
 			break;
 		case 2:
-			fragments.add(loc.getWorld().spawn(loc, MagmaCube.class));
+			entity = loc.getWorld().spawn(loc, MagmaCube.class);
 			break;
 		case 3:
-			fragments.add(loc.getWorld().spawn(loc, Skeleton.class));
+			entity = loc.getWorld().spawn(loc, Skeleton.class);
 			break;
 		case 4:
-			fragments.add(loc.getWorld().spawn(loc, Spider.class));
+			entity = loc.getWorld().spawn(loc, Spider.class);
 			break;
-		case 5:
-			fragments.add(loc.getWorld().spawn(loc, CaveSpider.class));
+		default:
+			entity = loc.getWorld().spawn(loc, CaveSpider.class);
 			break;
 		}
+		entity.setCustomName(ChatColor.BOLD + "Shield Fragment");
+		entity.setCustomNameVisible(true);
 	}
 	
 	
