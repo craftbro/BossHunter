@@ -85,7 +85,7 @@ public class BossUnknown extends Boss implements Listener{
 			}
 			if (shield){
 				if (r.nextInt(180) == 0){
-					if (fragments.size() < 10){
+					if (fragments.size() < r.nextInt(11) + 5){
 						spawnShieldFragment(randomPlayer().getLocation());
 					}
 				}
@@ -220,6 +220,9 @@ public class BossUnknown extends Boss implements Listener{
 			minions.remove(event.getEntity());
 		}
 		if (event.getEntity() instanceof LivingEntity && ((LivingEntity) event.getEntity()).getCustomName() == ChatColor.BOLD + "Shield Fragment"){
+			if (fragments.contains(event.getEntity())){
+				fragments.remove(event.getEntity());
+			}
 			if (event.getEntity() instanceof LivingEntity){
 				if (((LivingEntity) event.getEntity()).getKiller() != null){
 					damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, ((LivingEntity) event.getEntity()).getKiller(), true);
@@ -460,6 +463,7 @@ public class BossUnknown extends Boss implements Listener{
 		}
 		entity.setCustomName(ChatColor.BOLD + "Shield Fragment");
 		entity.setCustomNameVisible(true);
+		fragments.add(entity);
 	}
 	
 	

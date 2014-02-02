@@ -343,7 +343,7 @@ public class BossBlazo extends Boss implements Listener{
 			public void run() {
 				counter++;
 				Location tLoc = target.getLocation();
-				Vector vec = currentLoc.toVector().subtract(tLoc.toVector()).normalize().multiply(0.6);
+				Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize().multiply(0.6);
 				currentLoc = sLoc.add(vec);
 				entity.setVelocity(vec);
 				Iterator<Entity> itr = entity.getNearbyEntities(1, 1, 1).iterator();
