@@ -53,7 +53,7 @@ public class BossUnnamed  extends Boss implements Listener{
 	Random r = new Random();
 
 	public byte[] attackSet = new byte[]{
-		(byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(3), (byte) r.nextInt(2)
+		(byte) r.nextInt(5), (byte) r.nextInt(5), (byte) r.nextInt(4), (byte) r.nextInt(3), (byte) r.nextInt(2)
 	};
 	
 	public BossUnnamed(main m){
@@ -66,7 +66,7 @@ public class BossUnnamed  extends Boss implements Listener{
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, -19, -1130), EntityType.MAGMA_CUBE);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, 57, -1130), EntityType.MAGMA_CUBE);
 				((MagmaCube) boss).setSize(2);
 				boss.setMaxHealth(525);
 				boss.setHealth(525);
@@ -127,11 +127,6 @@ public class BossUnnamed  extends Boss implements Listener{
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
-		if (attackSet[0] == 4){
-			if (event.getEntity().getType() == EntityType.SLIME){
-				event.setCancelled(true);
-			}
-		}
 		if (spawned){
 			if (event.getEntity().getUniqueId() == boss.getUniqueId()){
 				if (spawned && boss.getHealth() / 5.25 <= 80 && !optimized1){
@@ -167,7 +162,7 @@ public class BossUnnamed  extends Boss implements Listener{
 				}
 				break;
 			}
-		} else if (event.getDamager() instanceof Slime){
+		} else if (event.getDamager() instanceof Slime && event.getDamager().getType() == EntityType.SLIME){
 			switch (attackSet[0]){
 			case 2:
 				if (event.getEntity() instanceof Damageable){
@@ -211,7 +206,7 @@ public class BossUnnamed  extends Boss implements Listener{
 				}
 				break;
 			case 4:
-				if (event.getEntity().getFireTicks() > 45){
+				if (event.getEntity().getFireTicks() < 45){
 					event.getEntity().setFireTicks(45);
 				}
 				break;
@@ -227,7 +222,7 @@ public class BossUnnamed  extends Boss implements Listener{
 			if (event.getEntity().getUniqueId() == boss.getUniqueId()){
 				spawned = false;
 				timer = 0;
-				for (int x = 0; x < 20; x++){
+				for (int x = 0; x < 40; x++){
 					MagmaCube baby = boss.getWorld().spawn(boss.getLocation(), MagmaCube.class);
 					baby.setSize(1);
 					baby.setMaxHealth(40);
@@ -287,7 +282,7 @@ public class BossUnnamed  extends Boss implements Listener{
 			}
 			break;
 		case 2:
-			for (int x = r.nextInt(4) + 1; x > 0; x--){
+			for (int x = r.nextInt(2) + 1; x > 0; x--){
 				if (getMinionsSize() < 6){
 					Slime brainSucker = attacker.getWorld().spawn(attacker.getLocation(), Slime.class);
 					brainSucker.setSize(2);
@@ -324,6 +319,7 @@ public class BossUnnamed  extends Boss implements Listener{
 					Slime fireSlime = attacker.getWorld().spawn(attacker.getLocation(), Slime.class);
 					fireSlime.setSize(2);
 					fireSlime.setFireTicks(Integer.MAX_VALUE);
+					fireSlime.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 					minions.add(fireSlime);
 				}
 			}
@@ -367,7 +363,7 @@ public class BossUnnamed  extends Boss implements Listener{
 			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 100, 2);
 			new BukkitRunnable(){
 				public void run(){
-					attacker.teleport(target);
+					//attacker.teleport(target);
 					ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 25, (float) 1.25);
 				}
 			}.runTaskLater(plugin, 45);
@@ -435,10 +431,11 @@ public class BossUnnamed  extends Boss implements Listener{
 			new BukkitRunnable(){
 				int timer = 0;
 				public void run(){
+					timer++;
 					Iterator<Entity> itr = attacker.getNearbyEntities(6, 6, 6).iterator();
 					while (itr.hasNext()){
 						Entity entity = itr.next();
-						entity.setVelocity(entity.getLocation().toVector().subtract(attacker.getLocation().toVector()).normalize().multiply(0.3));
+						entity.setVelocity(attacker.getLocation().toVector().subtract(entity.getLocation().toVector()).normalize().multiply(0.3));
 					}
 					if (timer > 140){
 						this.cancel();
@@ -455,6 +452,7 @@ public class BossUnnamed  extends Boss implements Listener{
 			new BukkitRunnable(){
 				int timer = 0;
 				public void run(){
+					timer++;
 					RasEffect.ANGRY_VILLAGER.display(attacker.getLocation(), (float) 0.6, (float) 0.6, (float) 0.6, 1, 10);
 					Iterator<Entity> itr = attacker.getNearbyEntities(6, 6, 6).iterator();
 					while (itr.hasNext()){
@@ -468,12 +466,6 @@ public class BossUnnamed  extends Boss implements Listener{
 					}
 				}
 			}.runTaskTimer(plugin, 0, 1);
-			break;
-		case 4:
-			Location tLoc = target.getLocation();
-			Location aLoc = attacker.getLocation();
-			target.teleport(aLoc);
-			attacker.teleport(tLoc);
 			break;
 		}
 	}
@@ -490,6 +482,7 @@ public class BossUnnamed  extends Boss implements Listener{
 				int timer = 0;
 				Slime slime = target.getWorld().spawn(target.getLocation(), Slime.class);
 				public void run(){
+					slime.setSize(2);
 					timer = timer + r.nextInt(7) + 17;
 					slime.setMaxHealth(999);
 					slime.setHealth(999);
