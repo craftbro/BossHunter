@@ -63,7 +63,7 @@ public class BossUnknown extends Boss implements Listener{
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, -19, -1130), EntityType.SQUID);
 				boss.setMaxHealth(525);
-				boss.setHealth(525);
+				boss.setHealth(boss.getMaxHealth());
 				boss.setCustomName(ChatColor.BLUE + "Shield");
 				boss.setCustomNameVisible(false);
 				boss.setCanPickupItems(false);
