@@ -103,8 +103,8 @@ public class BossArcher extends Boss implements Listener{
 				boss.setCustomName(ChatColor.GREEN + "Archer King");
 				boss.setCustomNameVisible(true);
 				boss.setRemoveWhenFarAway(false);
-				boss.setMaxHealth(600);
-				boss.setHealth(600);
+				boss.setMaxHealth(600 * Bukkit.getOnlinePlayers().length);
+				boss.setHealth(boss.getMaxHealth());
 				spawned = true;
 				attacks = 1;
 			}
@@ -117,34 +117,34 @@ public class BossArcher extends Boss implements Listener{
 			if(!boss.getLocation().getChunk().isLoaded()){
 				boss.getLocation().getChunk().load();
 			}
-			if (r.nextInt(28) == 0){
+			if (r.nextInt(24) == 0){
 				Vector vec = boss.getLocation().toVector().subtract(plugin.util.getNearest(boss).getLocation().toVector()).normalize().multiply(1.2);
 				vec.setY(0);
 				boss.setVelocity(vec);
 				plugin.util.setTargetToNearest(boss);
 			}
 			if (attacks >= 1){
-				if (r.nextInt(210) == 0){
+				if (r.nextInt(200) == 0){
 					arrows(boss);
 				}
 			}
 			if (attacks >= 2){
-				if (r.nextInt(240) == 0){
+				if (r.nextInt(225) == 0){
 					iceshot(boss);
 				}
 			}
 			if (attacks >= 3){
-				if (r.nextInt(260) == 0){
+				if (r.nextInt(255) == 0){
 					poisonshot(boss);
 				}
 			}
 			if (attacks >= 4){
-				if (r.nextInt(270) == 0){
+				if (r.nextInt(240) == 0){
 					boomshot(boss);
 				}
 			}
 			if (attacks >= 5){
-				if (r.nextInt(170) == 0){
+				if (r.nextInt(120) == 0){
 					longshot(boss);
 				}
 			}
@@ -160,19 +160,19 @@ public class BossArcher extends Boss implements Listener{
 	public void onEntityDamage(EntityDamageEvent event){
 		Entity entity = event.getEntity();
 		if (spawned && entity.getUniqueId() == boss.getUniqueId()){
-			if (boss.getHealth() / 6 <= 80 && !optimized1){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
 			}
-			if (boss.getHealth() / 6 <= 70 && !optimized2){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 70 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (boss.getHealth() / 6 <= 50 && !optimized3){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 50 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 			}
-			if (boss.getHealth() / 6 <= 40 && !optimized4){
+			if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 40 && !optimized4){
 				optimized4 = true;
 				attacks = 5;
 			}
@@ -228,8 +228,8 @@ public class BossArcher extends Boss implements Listener{
 			final Location loc = boss.getLocation();
 			loc.setY(loc.getY() + 1);
 			loc.setPitch(-3);
-			for (int x = 0; x < 240; x++){
-				loc.setYaw(loc.getYaw() + 3);
+			for (int x = 0; x < 120; x++){
+				loc.setYaw(loc.getYaw() + 6);
 				final Arrow arrow = boss.getWorld().spawnArrow(loc, loc.getDirection(), 0.8F, 5);
 				arrow.setFireTicks(99999999);
 				arrow.setBounce(true);
@@ -242,8 +242,8 @@ public class BossArcher extends Boss implements Listener{
 			}
 			new BukkitRunnable(){
 				public void run(){
-					for (int x = 0; x < 240; x++){
-						loc.setYaw(loc.getYaw() + 3);
+					for (int x = 0; x < 120; x++){
+						loc.setYaw(loc.getYaw() + 6);
 						final Arrow arrow = boss.getWorld().spawnArrow(loc, loc.getDirection(), 0.8F, 5);
 						arrow.setFireTicks(99999999);
 						arrow.setBounce(true);
