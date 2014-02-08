@@ -1,8 +1,6 @@
 package code.boss.bosses;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -11,24 +9,20 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -49,7 +43,6 @@ public class BossUnknown extends Boss implements Listener{
 	public String u_v = ChatColor.BLACK + "[" + ChatColor.DARK_GRAY + "???" + ChatColor.BLACK + "] " + ChatColor.GRAY;
 	public String s_v = ChatColor.DARK_BLUE + "[" + ChatColor.BLUE + "Squiddy" + ChatColor.DARK_BLUE + "] " + ChatColor.AQUA;
 	public boolean shield = true;
-	public List<LivingEntity> fragments = new ArrayList<LivingEntity>();
 	public int timesDeath = 0;
 	
 	Random r = new Random();
@@ -64,10 +57,10 @@ public class BossUnknown extends Boss implements Listener{
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
 			public void run(){
-				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, -19, -1130), EntityType.SQUID);
+				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(plugin.arena.getSpawn(), EntityType.CHICKEN);
 				boss.setMaxHealth(525);
 				boss.setHealth(boss.getMaxHealth());
-				boss.setCustomName(ChatColor.BLUE + "Shield");
+				boss.setCustomName(ChatColor.GRAY + "Shield");
 				boss.setCustomNameVisible(false);
 				boss.setCanPickupItems(false);
 				boss.setRemoveWhenFarAway(false);
@@ -84,33 +77,32 @@ public class BossUnknown extends Boss implements Listener{
 				boss.getLocation().getChunk().load();
 			}
 			if (shield){
-				if (r.nextInt(180) == 0){
-					if (fragments.size() < r.nextInt(11) + 5){
-						spawnShieldFragment(randomPlayer().getLocation());
-					}
-				}
 				if (attacks >= 1){
-					if (r.nextInt(270) == 0){
+					if (r.nextInt(240) == 0){
 						if (getMinionsSize() < 5){
-							wolfs(randomPlayer());
+							skellies(randomPlayer());
 						}
 					}
 				}
 				if (attacks >= 2){
-					if (r.nextInt(300) == 0){
-						flameForm(randomPlayer(), randomPlayer());
+					if (r.nextInt(279) == 0){
+						if (!flameForm(randomPlayer(), randomPlayer())){
+							if (!flameForm(randomPlayer(), randomPlayer())){
+								flameForm(randomPlayer(), randomPlayer());
+							}
+						}
 					}
 				}
 				if (attacks >= 3){
-					if (r.nextInt(290) == 0){
+					if (r.nextInt(280) == 0){
 						smite(randomPlayer());
 					}
 				}
 				if (attacks >= 4){
-					if (r.nextInt(360) == 0){
+					if (r.nextInt(340) == 0){
 						lazer(randomPlayer().getLocation());
 					}
-					if (r.nextInt(334) == 0){
+					if (r.nextInt(300) == 0){
 						shock(randomPlayer());
 					}
 				}
@@ -186,32 +178,38 @@ public class BossUnknown extends Boss implements Listener{
 							boss.setRemoveWhenFarAway(false);
 							attacks = 1;
 							spawned = true;
+							timesDeath++;
 						}
 					}.runTaskLater(plugin, timer += 90);
 				} else {
-					timesDeath++;
 					if (timesDeath == 1){
-						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
 								boss.setMaxHealth(20);
 								boss.setHealth(20);
 								attacks = 1;
 								spawned = true;
+								timesDeath++;
 							}
-						}.runTaskLater(plugin, timer += 2);
+						}.runTaskLater(plugin, 2);
 					} else if (timesDeath == 2){
-						timer = 0;
 						new BukkitRunnable(){
 							public void run(){
 								boss.setMaxHealth(10);
 								boss.setHealth(10);
 								attacks = 1;
 								spawned = true;
+								timesDeath++;
 							}
-						}.runTaskLater(plugin, timer += 2);
+						}.runTaskLater(plugin, 4);
 					} else {
-						plugin.stop();
+						timesDeath++;
+						boss.remove();
+						new BukkitRunnable(){
+							public void run(){
+								plugin.stop();
+							}
+						}.runTaskLater(plugin, 90);
 					}
 				}
 			}
@@ -219,42 +217,55 @@ public class BossUnknown extends Boss implements Listener{
 		if (minions.contains(event.getEntity())){
 			minions.remove(event.getEntity());
 		}
-		if (event.getEntity() instanceof LivingEntity && ((LivingEntity) event.getEntity()).getCustomName() == ChatColor.BOLD + "Shield Fragment"){
-			if (fragments.contains(event.getEntity())){
-				fragments.remove(event.getEntity());
-			}
-			if (event.getEntity() instanceof LivingEntity){
-				if (((LivingEntity) event.getEntity()).getKiller() != null){
-					damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, ((LivingEntity) event.getEntity()).getKiller(), true);
-				} else {
-					damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
+	}
+	
+	
+	
+	@EventHandler
+	public void onEntityCombust(EntityCombustEvent event){
+		event.setCancelled(true);
+	}
+	
+	
+	
+	public void skellies(final Entity target){
+		Location loc = target.getLocation();
+		loc.setY(loc.getY() + 3.35);
+		final Skeleton leader = (Skeleton) target.getWorld().spawnEntity(loc, EntityType.SKELETON);
+		for (int x = 0; x < r.nextInt(6) + 5; x++){
+			final Skeleton skellyton = (Skeleton) target.getWorld().spawnEntity(loc, EntityType.SKELETON);
+			skellyton.getEquipment().setItemInHand(new ItemStack(Material.BOW));
+			minions.add(skellyton);
+			new BukkitRunnable(){
+				public void run(){
+					if (skellyton.isValid() && !skellyton.isDead()){
+						minions.remove(skellyton);
+						skellyton.setHealth(0);
+					}
 				}
-			} else {
-				damageWithEvent(boss, r.nextInt(16) + 10, DamageCause.ENTITY_ATTACK, true);
-			}
+			}.runTaskLater(plugin, r.nextInt(201) + 200);
 		}
-	}
-	
-	
-	
-	public void wolfs(Entity target){
-		Wolf leader = target.getWorld().spawn(target.getLocation(), Wolf.class);
-		for (int d = 0; d < r.nextInt(6) + 5; d++){
-			Wolf wolf = target.getWorld().spawn(target.getLocation(), Wolf.class);
-			wolf.damage(0, target);
-			wolf.setAngry(true);
-			wolf.setTamed(false);
-			minions.add(wolf);
-		}
-		leader.damage(0, target);
-		leader.setAngry(true);
-		leader.setTamed(false);
-		leader.setPassenger(target);
+		leader.setSkeletonType(SkeletonType.WITHER);
+		target.setPassenger(leader);
+		leader.setMaxHealth(4);
+		leader.setHealth(4);
+		leader.getEquipment().setItemInHand(new ItemStack(Material.WOOD_SWORD));
 		minions.add(leader);
+		new BukkitRunnable(){
+			public void run(){
+				if (leader.isValid() && !leader.isDead()){
+					minions.remove(leader);
+					leader.setHealth(0);
+				}
+			}
+		}.runTaskLater(plugin, r.nextInt(101) + 100);
 	}
 	
 	
-	public void flameForm(final LivingEntity from, final LivingEntity to){
+	public boolean flameForm(final LivingEntity from, final LivingEntity to){
+		if (from.getUniqueId() == to.getUniqueId()){
+			return false;
+		}
 		final Location sLocOriginal = from.getEyeLocation();
 		final Location sLoc = from.getEyeLocation();
 		Location tLoc = to.getEyeLocation();
@@ -291,6 +302,7 @@ public class BossUnknown extends Boss implements Listener{
 				}
 			}
 		}.runTaskTimer(plugin, 0, 1);
+		return true;
 	}
 	
 	
@@ -354,45 +366,51 @@ public class BossUnknown extends Boss implements Listener{
 								loc.getWorld().playEffect(loc2, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 								new BukkitRunnable(){
 									public void run(){
+										final Location tempLoc = loc.clone();
 										for (int x = 0; x < 35; x++){
-											Location tempLoc = loc.clone();
-											tempLoc.setX(tempLoc.getX() + 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setZ(tempLoc.getZ() + 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setX(tempLoc.getX() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setX(tempLoc.getX() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setX(tempLoc.getX() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setZ(tempLoc.getZ() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setZ(tempLoc.getX() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setZ(tempLoc.getX() - 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setX(tempLoc.getX() + 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											tempLoc.setX(tempLoc.getX() + 1);
-											tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-											loc.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.SNOW_BLOCK);
-											Item item = loc.getWorld().dropItem(loc, new ItemStack(Material.SNOW_BLOCK));
-											Iterator<Entity> itr = item.getNearbyEntities(2, 2, 2).iterator();
-											while (itr.hasNext()){
-												Entity entity = itr.next();
-												damageWithEvent(entity, r.nextInt(6) + 10, DamageCause.FIRE, false);
-												entity.setFireTicks(entity.getFireTicks() + 12);
-											}
+											new BukkitRunnable(){
+												public void run(){
+													tempLoc.setX(tempLoc.getX() + 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setZ(tempLoc.getZ() + 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setX(tempLoc.getX() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setX(tempLoc.getX() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setX(tempLoc.getX() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setZ(tempLoc.getZ() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setZ(tempLoc.getX() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setZ(tempLoc.getX() - 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setX(tempLoc.getX() + 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													tempLoc.setX(tempLoc.getX() + 1);
+													tempLoc.getWorld().playEffect(tempLoc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+													loc.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.SNOW_BLOCK);
+													Item item = loc.getWorld().dropItem(loc, new ItemStack(Material.SNOW_BLOCK));
+													Iterator<Entity> itr = item.getNearbyEntities(2, 2, 2).iterator();
+													while (itr.hasNext()){
+														Entity entity = itr.next();
+														damageWithEvent(entity, r.nextInt(6) + 10, DamageCause.FIRE, false);
+														entity.setFireTicks(entity.getFireTicks() + 12);
+													}
+													tempLoc.setY(tempLoc.getY() - 1);
+													item.remove();
+												}
+											}.runTaskLater(plugin, x);
 										}
 									}
-								}.runTaskLater(plugin, 54);
+								}.runTaskLater(plugin, 71);
 							}
-						}.runTaskLater(plugin, 48);
+						}.runTaskLater(plugin, 43);
 					}
-				}.runTaskLater(plugin, 48);
+				}.runTaskLater(plugin, 43);
 			}
-		}.runTaskLater(plugin, 48);
+		}.runTaskLater(plugin, 43);
 	}
 	
 	
@@ -402,7 +420,16 @@ public class BossUnknown extends Boss implements Listener{
 			
 			public void run(){
 				counter++;
-				target.damage(0);
+				if (target instanceof LivingEntity){
+					int maxNoDamageTicks = ((LivingEntity) target).getMaximumNoDamageTicks();
+					int noDamageTicks = ((LivingEntity) target).getNoDamageTicks();
+					((LivingEntity) target).setMaximumNoDamageTicks(0);
+					((LivingEntity) target).setNoDamageTicks(0);
+					target.damage(1);
+					plugin.util.heal((LivingEntity) target, 1);
+					((LivingEntity) target).setMaximumNoDamageTicks(maxNoDamageTicks);
+					((LivingEntity) target).setNoDamageTicks(noDamageTicks);
+				}
 				if (counter <= 0){
 					this.cancel();
 				}
@@ -412,12 +439,8 @@ public class BossUnknown extends Boss implements Listener{
 	
 	
 	public void annoyer(final LivingEntity target, final Entity annoyer){
-		final Location sLoc = target.getEyeLocation();
-		Location tLoc = annoyer.getLocation();
-		final Vector vec = tLoc.toVector().subtract(sLoc.toVector()).normalize().multiply(0.42);
 		new BukkitRunnable(){
 			int counter = 0;
-			Location currentLoc = sLoc.add(vec);
 			
 			public void run() {
 				counter++;
@@ -425,45 +448,14 @@ public class BossUnknown extends Boss implements Listener{
 					((Damageable) annoyer).setMaxHealth(Float.MAX_VALUE);
 					((Damageable) annoyer).setHealth(((Damageable) annoyer).getMaxHealth());
 				}
-				Location tLoc = target.getLocation();
-				Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize().multiply(0.42);
-				currentLoc = sLoc.add(vec);
-				ParticleEffect.MOB_SPELL_AMBIENT.animateAtLocation(currentLoc, 15, 1);
+				ParticleEffect.MOB_SPELL_AMBIENT.animateAtLocation(target.getEyeLocation(), 15, 1);
+				annoyer.teleport(target.getEyeLocation());
 				if (counter >= r.nextInt(201) + 300){
 					annoyer.remove();
 					this.cancel();
 				}
 			}
 		}.runTaskTimer(plugin, 0, 1);
-	}
-	
-	
-	public void spawnShieldFragment(Location loc){
-		int rEnt = r.nextInt(6);
-		LivingEntity entity;
-		switch (rEnt){
-		case 0:
-			entity = loc.getWorld().spawn(loc, Zombie.class);
-			break;
-		case 1:
-			entity = loc.getWorld().spawn(loc, Slime.class);
-			break;
-		case 2:
-			entity = loc.getWorld().spawn(loc, MagmaCube.class);
-			break;
-		case 3:
-			entity = loc.getWorld().spawn(loc, Skeleton.class);
-			break;
-		case 4:
-			entity = loc.getWorld().spawn(loc, Spider.class);
-			break;
-		default:
-			entity = loc.getWorld().spawn(loc, CaveSpider.class);
-			break;
-		}
-		entity.setCustomName(ChatColor.BOLD + "Shield Fragment");
-		entity.setCustomNameVisible(true);
-		fragments.add(entity);
 	}
 	
 	
