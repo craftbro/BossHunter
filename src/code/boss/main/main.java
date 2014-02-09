@@ -161,7 +161,7 @@ public class main extends JavaPlugin implements Listener{
 		world.setGameRuleValue("mobGriefing", "false");
 		world.setGameRuleValue("doMobLoot", "false");
 		
-		arena = new ArenaUnknown(this);
+		arena = new ArenaUnnamed(this);
 		
 		
 

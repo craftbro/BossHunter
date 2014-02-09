@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import code.boss.bosses.arenas.ArenaUnknown;
 import code.boss.item.NamedStack;
 import code.boss.main.main;
 import code.boss.player.eco.abilities.Ability;
@@ -160,8 +161,10 @@ public class PlayerManager implements Listener {
 				}else{
 	//				plugin.level.giveExp(e.getKiller(), 200, "Killing The Boss");
 	//				plugin.eco.giveMoney(e.getKiller(), 200, "Killing The Boss");
-					plugin.util.giveExpAndMoney(e.getKiller(), 200, 200, "Killing The Boss");
-					Bukkit.broadcastMessage(plugin.arena.getBoss().getBoss().getCustomName()+ChatColor.GREEN+" was slain by "+e.getKiller().getName());
+					if (!(plugin.arena instanceof ArenaUnknown)){
+						plugin.util.giveExpAndMoney(e.getKiller(), 200, 200, "Killing The Boss");
+						Bukkit.broadcastMessage(plugin.arena.getBoss().getBoss().getCustomName()+ChatColor.GREEN+" was slain by "+e.getKiller().getName());
+					}
 				}
 			}
 		}

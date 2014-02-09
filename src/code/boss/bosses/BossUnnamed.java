@@ -361,12 +361,9 @@ public class BossUnnamed  extends Boss implements Listener{
 			break;
 		case 2:
 			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 100, 2);
-			new BukkitRunnable(){
-				public void run(){
-					//attacker.teleport(target);
-					ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 25, (float) 1.25);
-				}
-			}.runTaskLater(plugin, 45);
+			if (attacker instanceof LivingEntity){
+				((LivingEntity) attacker).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 111, 0));
+			}
 			break;
 		case 3:
 			Location loc = target.getLocation();
@@ -558,9 +555,9 @@ public class BossUnnamed  extends Boss implements Listener{
 		case 0:
 			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 250, 7);
 			for (Player target2 : Bukkit.getOnlinePlayers()){
-				target2.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0));
-				target2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 1));
-				target2.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 9));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 205, 0));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 190, 1));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 170, 9));
 				ParticleEffect.FIREWORK_SPARK.animateAtLocation(target2.getLocation(), 10, (float) 1.5);
 			}
 			break;

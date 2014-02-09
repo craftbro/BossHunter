@@ -204,6 +204,10 @@ public class BossUnknown extends Boss implements Listener{
 						}.runTaskLater(plugin, 4);
 					} else {
 						timesDeath++;
+						if (boss.getKiller() != null){
+							plugin.util.giveExpAndMoney(boss.getKiller(), 200, 200, "Killing The Boss");
+							Bukkit.broadcastMessage(plugin.arena.getBoss().getBoss().getCustomName()+ChatColor.GREEN+" was slain by "+boss.getKiller().getName());
+						}
 						boss.remove();
 						new BukkitRunnable(){
 							public void run(){
