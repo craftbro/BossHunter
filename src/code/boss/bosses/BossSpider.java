@@ -57,7 +57,7 @@ public class BossSpider extends Boss implements Listener{
 		} else {
 			plugin.util.broadcastDelaySound(Bukkit.getOnlinePlayers().length + " brave players ran out to save their town", Sound.DIG_GRAVEL, 1, timer += 70);
 		}
-		plugin.util.broadcastDelaySound("Because the villagers got killed by the dangerous Spider named Venommy", Sound.CAT_HISS, 1, timer += 75);
+		plugin.util.broadcastDelaySound("Because the villagers got killed by the dangerous Spider named Venommy", Sound.ANVIL_LAND, 1, timer += 75);
 		plugin.util.broadcastDelaySound("But since Venommy is so amazingly strong and amazing they dont have a chance", Sound.CHICKEN_HURT, 1, timer += 70);
 		final Player screamer = randomPlayer();
 		plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+screamer.getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "What?? And just so you know this isn't an adventure", Sound.VILLAGER_NO, 1, timer += 60);
@@ -69,7 +69,7 @@ public class BossSpider extends Boss implements Listener{
 		}.runTaskLater(plugin, timer += 20);
 		plugin.util.broadcastDelaySound(v_v + "Ok ok im the amazing " + ChatColor.LIGHT_PURPLE + "Venommy" + ChatColor.AQUA + " But you still dont have a chance to help your town!", Sound.SPIDER_IDLE, 1, timer += 80);
 		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We will see...", Sound.VILLAGER_HAGGLE, 1, timer += 68);
-		plugin.util.broadcastDelaySound(v_v + "Yes we will right now!", Sound.CAT_HISS, 1, timer += 70);
+		plugin.util.broadcastDelaySound(v_v + "Yes we will right now!", Sound.SPIDER_IDLE, 1, timer += 70);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
 			public void run(){
@@ -96,21 +96,21 @@ public class BossSpider extends Boss implements Listener{
 			}
 			if (diseases >= 1){
 				if (r.nextInt(100) == 0){
-					if (getMinionsSize() < 7){
+					if (getMinionsSize() < 9){
 						spiderling(boss.getLocation(), Disease.DIZZY);
 					}
 				}
 			}
 			if (diseases >= 2){
 				if (r.nextInt(160) == 0){
-					if (getMinionsSize() < 15){
+					if (getMinionsSize() < 17){
 						spiderling(boss.getLocation(), Disease.FEAR);
 					}
 				}
 			}
 			if (diseases >= 3){
 				if (r.nextInt(220) == 0){
-					if (getMinionsSize() < 20){
+					if (getMinionsSize() < 21){
 						spiderling(boss.getLocation(), Disease.POISON);
 					}
 				}
@@ -184,8 +184,6 @@ public class BossSpider extends Boss implements Listener{
 				if (name == Disease.DIZZY.getName()){
 					if (!dizzy.containsKey(((Player) event.getEntity()).getName())){
 						dizzy.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
-						ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
-						event.getDamager().remove();
 						if (firstDisease){
 							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
 							firstDisease = false;
@@ -194,8 +192,6 @@ public class BossSpider extends Boss implements Listener{
 				} else if (name == Disease.FEAR.getName()){
 					if (!fear.containsKey(((Player) event.getEntity()).getName())){
 						fear.put(((Player) event.getEntity()).getName(), r.nextInt(51) + 50);
-						ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
-						event.getDamager().remove();
 						if (firstDisease){
 							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
 							firstDisease = false;
@@ -204,8 +200,6 @@ public class BossSpider extends Boss implements Listener{
 				} else if (name == Disease.NOISES.getName()){
 					if (!noises.containsKey(((Player) event.getEntity()).getName())){
 						noises.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
-						ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
-						event.getDamager().remove();
 						if (firstDisease){
 							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
 							firstDisease = false;
@@ -214,8 +208,6 @@ public class BossSpider extends Boss implements Listener{
 				} else if (name == Disease.POISON.getName()){
 					if (!poison.containsKey(((Player) event.getEntity()).getName())){
 						poison.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 5);
-						ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
-						event.getDamager().remove();
 						if (firstDisease){
 							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
 							firstDisease = false;
@@ -224,14 +216,14 @@ public class BossSpider extends Boss implements Listener{
 				} else if (name == Disease.VULNERABILITY.getName()){
 					if (!vulnerable.containsKey(((Player) event.getEntity()).getName())){
 						vulnerable.put(((Player) event.getEntity()).getName(), r.nextInt(16) + 15);
-						ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
-						event.getDamager().remove();
 						if (firstDisease){
 							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
 							firstDisease = false;
 						}
 					}
-				} 
+				}
+				ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
+				event.getDamager().remove();
 			}
 		} else if (spawned && event.getDamager().getUniqueId() == boss.getUniqueId()){
 			if (event.getEntity() instanceof Player){
@@ -305,13 +297,21 @@ public class BossSpider extends Boss implements Listener{
 	
 	
 	public void spiderling(Location loc, Disease disease){
-		CaveSpider spider = loc.getWorld().spawn(loc,CaveSpider.class);
+		final CaveSpider spider = loc.getWorld().spawn(loc,CaveSpider.class);
 		spider.setCustomName(disease.getName());
 		spider.setCustomNameVisible(true);
 		spider.setMaxHealth(r.nextInt(6) + 5);
 		spider.setHealth(spider.getMaxHealth());
 		spider.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
 		minions.add(spider);
+		new BukkitRunnable(){
+			public void run(){
+				if (spider.isValid() && !spider.isDead()){
+					minions.remove(spider);
+					spider.setHealth(0);
+				}
+			}
+		}.runTaskLater(plugin, r.nextInt(151) + 150);
 	}
 	
 	
@@ -353,8 +353,8 @@ public class BossSpider extends Boss implements Listener{
 				for (String playerName : dizzy.keySet()){
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						Player player = Bukkit.getPlayer(playerName);
-						Vector vec = Vector.getRandom();
-						vec.setY(r.nextInt(6) / 10);
+						Vector vec = Vector.getRandom().multiply(0.4);
+						vec.setY(r.nextInt(3 + r.nextInt(4)) / 10);
 						player.setVelocity(vec);
 						if (dizzy.get(playerName) < 0){
 							dizzy.remove(playerName);
@@ -375,8 +375,10 @@ public class BossSpider extends Boss implements Listener{
 				for (String playerName : fear.keySet()){
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						Player player = Bukkit.getPlayer(playerName);
-						Vector vec = getNearestEntityInRadius(player, 6, true).getLocation().toVector().subtract(player.getLocation().toVector()).normalize().multiply(0.46);
-						player.setVelocity(vec);
+						if (getNearestEntityInRadius(player, 8, true) != null){
+							Vector vec = getNearestEntityInRadius(player, 6, true).getLocation().toVector().subtract(player.getLocation().toVector()).normalize().multiply(0.46);
+							player.setVelocity(vec);
+						}
 						if (fear.get(playerName) < 0){
 							fear.remove(playerName);
 							this.cancel();
