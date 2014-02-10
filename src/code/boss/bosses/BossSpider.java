@@ -51,16 +51,16 @@ public class BossSpider extends Boss implements Listener{
 	
 	public void start(){
 		timer = 0;
-		plugin.util.broadcastDelaySound("Once upon a time", Sound.CHEST_OPEN, 1, timer += 80);
+		plugin.util.broadcastDelaySound("Once upon a time", Sound.CHEST_OPEN, 0, timer += 80);
 		if (Bukkit.getOnlinePlayers().length < 2){
 			plugin.util.broadcastDelaySound("One brave player ran out to save his town", Sound.DIG_GRAVEL, 1, timer += 70);
 		} else {
-			plugin.util.broadcastDelaySound(Bukkit.getOnlinePlayers().length + " brave players ran out to save their town", Sound.DIG_GRAVEL, 1, timer += 70);
+			plugin.util.broadcastDelaySound(Bukkit.getOnlinePlayers().length + " brave players ran out to save their town", Sound.DIG_GRAVEL, 0, timer += 70);
 		}
 		plugin.util.broadcastDelaySound("Because the villagers got killed by the dangerous Spider named Venommy", Sound.ANVIL_LAND, 1, timer += 75);
 		plugin.util.broadcastDelaySound("But since Venommy is so amazingly strong and amazing they dont have a chance", Sound.CHICKEN_HURT, 1, timer += 70);
 		final Player screamer = randomPlayer();
-		plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+screamer.getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "What?? And just so you know this isn't an adventure", Sound.VILLAGER_NO, 1, timer += 60);
+		plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+screamer.getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "What?? And just so you know this isn't a Story", Sound.VILLAGER_NO, 1, timer += 60);
 		new BukkitRunnable(){
 			public void run(){
 				screamer.teleport(new Location(screamer.getWorld(), screamer.getLocation().getX(), screamer.getLocation().getY() - 1, screamer.getLocation().getZ()));
@@ -77,7 +77,7 @@ public class BossSpider extends Boss implements Listener{
 				boss.setMaxHealth(550);
 				boss.setHealth(boss.getMaxHealth());
 				boss.setCustomName(ChatColor.LIGHT_PURPLE + "Venommy");
-				boss.setCustomNameVisible(false);
+				boss.setCustomNameVisible(true);
 				boss.setCanPickupItems(false);
 				boss.setRemoveWhenFarAway(false);
 				diseases = 1;
@@ -91,6 +91,7 @@ public class BossSpider extends Boss implements Listener{
 	
 	public void tick(){
 		if (spawned){
+			boss.getWorld().setTime(14000);
 			if(!boss.getLocation().getChunk().isLoaded()){
 				boss.getLocation().getChunk().load();
 			}
@@ -162,11 +163,11 @@ public class BossSpider extends Boss implements Listener{
 			if (spawned && boss.getHealth() / 5.5 <= 55 && !optimized3){
 				optimized3 = true;
 				diseases = 4;
+				shield = true;
 			}
 			if (spawned && boss.getHealth() / 5.5 <= 30 && !optimized4){
 				optimized4 = true;
 				diseases = 5;
-				shield = true;
 			}
 			if (shield){
 				event.setDamage(event.getDamage() / 1.4);
@@ -183,43 +184,48 @@ public class BossSpider extends Boss implements Listener{
 				String name = ((CaveSpider) event.getDamager()).getCustomName();
 				if (name == Disease.DIZZY.getName()){
 					if (!dizzy.containsKey(((Player) event.getEntity()).getName())){
-						dizzy.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
+						dizzy.put(((Player) event.getEntity()).getName(), r.nextInt(21) + 20);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with " + ((CaveSpider) event.getDamager()).getCustomName());
 					}
 				} else if (name == Disease.FEAR.getName()){
 					if (!fear.containsKey(((Player) event.getEntity()).getName())){
 						fear.put(((Player) event.getEntity()).getName(), r.nextInt(51) + 50);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with " + ((CaveSpider) event.getDamager()).getCustomName());
 					}
 				} else if (name == Disease.NOISES.getName()){
 					if (!noises.containsKey(((Player) event.getEntity()).getName())){
 						noises.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with " + ((CaveSpider) event.getDamager()).getCustomName());
 					}
 				} else if (name == Disease.POISON.getName()){
 					if (!poison.containsKey(((Player) event.getEntity()).getName())){
 						poison.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 5);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with " + ((CaveSpider) event.getDamager()).getCustomName());
 					}
 				} else if (name == Disease.VULNERABILITY.getName()){
 					if (!vulnerable.containsKey(((Player) event.getEntity()).getName())){
 						vulnerable.put(((Player) event.getEntity()).getName(), r.nextInt(16) + 15);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with " + ((CaveSpider) event.getDamager()).getCustomName());
 					}
 				}
 				ParticleEffect.FIREWORK_SPARK.animateAtLocation(event.getDamager().getLocation(), 10, (float) 0.8);
@@ -230,48 +236,53 @@ public class BossSpider extends Boss implements Listener{
 				int rDisease = r.nextInt(101);
 				if (rDisease < 39){
 					if (!dizzy.containsKey(((Player) event.getEntity()).getName()) && diseases > 0){
-						dizzy.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
+						dizzy.put(((Player) event.getEntity()).getName(), r.nextInt(21) + 20);
 						RasEffect.SLIME.display(event.getDamager().getLocation(), (float) 0.5, (float) 0.5, (float) 0.5, 10, 1);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with Dizzy");
 					}
 				} else if (rDisease < 59){
 					if (!fear.containsKey(((Player) event.getEntity()).getName()) && diseases > 1){
 						fear.put(((Player) event.getEntity()).getName(), r.nextInt(51) + 50);
 						RasEffect.SLIME.display(event.getDamager().getLocation(), (float) 0.5, (float) 0.5, (float) 0.5, 10, 1);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with Fear");
 					}
 				} else if (rDisease < 69){
 					if (!poison.containsKey(((Player) event.getEntity()).getName()) && diseases > 2){
 						poison.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 5);
 						RasEffect.SLIME.display(event.getDamager().getLocation(), (float) 0.5, (float) 0.5, (float) 0.5, 10, 1);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with Poison");
 					}
 				} else if (rDisease < 74){
 					if (!vulnerable.containsKey(((Player) event.getEntity()).getName()) && diseases > 3){
 						vulnerable.put(((Player) event.getEntity()).getName(), r.nextInt(16) + 15);
 						RasEffect.SLIME.display(event.getDamager().getLocation(), (float) 0.5, (float) 0.5, (float) 0.5, 10, 1);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with Vulnerability");
 					}
 				} else if (rDisease <  88){
 					if (!noises.containsKey(((Player) event.getEntity()).getName()) && diseases > 4){
 						noises.put(((Player) event.getEntity()).getName(), r.nextInt(11) + 10);
 						RasEffect.SLIME.display(event.getDamager().getLocation(), (float) 0.5, (float) 0.5, (float) 0.5, 10, 1);
 						if (firstDisease){
-							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT_FLESH, 1, 4);
+							plugin.util.broadcastDelaySound(ChatColor.GOLD+"["+ChatColor.DARK_GREEN+((Player) event.getEntity()).getName()+ChatColor.GOLD+"]: "+ChatColor.YELLOW + "Ouch! she infected me!", Sound.HURT, 1, 4);
 							firstDisease = false;
 						}
+						((Player) event.getEntity()).sendMessage(ChatColor.RED + "You got infected with Noises");
 					}
 				}
 			}
@@ -286,7 +297,13 @@ public class BossSpider extends Boss implements Listener{
 			minions.remove(event.getEntity());
 		}
 		if (spawned && event.getEntity().getUniqueId() == boss.getUniqueId()){
+			spawned = false;
 			timer = 0;
+			dizzy.clear();
+			fear.clear();
+			noises.clear();
+			vulnerable.clear();
+			poison.clear();
 			new BukkitRunnable(){
 				public void run(){
 					plugin.stop();
@@ -300,9 +317,9 @@ public class BossSpider extends Boss implements Listener{
 		final CaveSpider spider = loc.getWorld().spawn(loc,CaveSpider.class);
 		spider.setCustomName(disease.getName());
 		spider.setCustomNameVisible(true);
-		spider.setMaxHealth(r.nextInt(6) + 5);
+		spider.setMaxHealth(r.nextInt(4) + 2);
 		spider.setHealth(spider.getMaxHealth());
-		spider.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
+		spider.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1));
 		minions.add(spider);
 		new BukkitRunnable(){
 			public void run(){
@@ -327,7 +344,7 @@ public class BossSpider extends Boss implements Listener{
 	 * @return The nearest Entity
 	 * @Warning will return null if none found
 	 */
-	public Entity getNearestEntityInRadius(Entity from, int radius, boolean onlyLiving){
+	public Entity getNearestEntityInRadius(Entity from, double radius, boolean onlyLiving){
 		Entity nearest = null;
 		double distance = Double.MAX_VALUE;
 		List<Entity> entities = from.getNearbyEntities(radius, radius, radius);
@@ -353,12 +370,11 @@ public class BossSpider extends Boss implements Listener{
 				for (String playerName : dizzy.keySet()){
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						Player player = Bukkit.getPlayer(playerName);
-						Vector vec = Vector.getRandom().multiply(0.4);
+						Vector vec = Vector.getRandom().multiply(0.125);
 						vec.setY(r.nextInt(3 + r.nextInt(4)) / 10);
 						player.setVelocity(vec);
 						if (dizzy.get(playerName) < 0){
 							dizzy.remove(playerName);
-							this.cancel();
 						} else {
 							Integer counter = dizzy.get(playerName);
 							dizzy.remove(playerName);
@@ -375,13 +391,12 @@ public class BossSpider extends Boss implements Listener{
 				for (String playerName : fear.keySet()){
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						Player player = Bukkit.getPlayer(playerName);
-						if (getNearestEntityInRadius(player, 8, true) != null){
-							Vector vec = getNearestEntityInRadius(player, 6, true).getLocation().toVector().subtract(player.getLocation().toVector()).normalize().multiply(0.46);
+						if (getNearestEntityInRadius(player, 7.45, true) != null){
+							Vector vec = player.getLocation().toVector().subtract(getNearestEntityInRadius(player, 8, true).getLocation().toVector()).normalize().multiply(0.14);
 							player.setVelocity(vec);
 						}
 						if (fear.get(playerName) < 0){
 							fear.remove(playerName);
-							this.cancel();
 						} else {
 							Integer counter = fear.get(playerName);
 							fear.remove(playerName);
@@ -398,11 +413,10 @@ public class BossSpider extends Boss implements Listener{
 				for (String playerName : poison.keySet()){
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						Player player = Bukkit.getPlayer(playerName);
-						player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 4, 0));
-						player.damage(1);
+						player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 14, 0));
+						player.damage((r.nextInt(6) + 5) / 10);
 						if (poison.get(playerName) < 0){
 							poison.remove(playerName);
-							this.cancel();
 						} else {
 							Integer counter = poison.get(playerName);
 							poison.remove(playerName);
@@ -420,7 +434,6 @@ public class BossSpider extends Boss implements Listener{
 					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
 						if (vulnerable.get(playerName) < 0){
 							vulnerable.remove(playerName);
-							this.cancel();
 						} else {
 							Integer counter = vulnerable.get(playerName);
 							vulnerable.remove(playerName);
@@ -446,7 +459,7 @@ public class BossSpider extends Boss implements Listener{
 								if (rNoise == 0){
 									((Player) entity).playSound(entity.getLocation(), Sound.BURP, 100, 1);
 								} else if (rNoise == 1){
-									((Player) entity).playSound(entity.getLocation(), Sound.HURT_FLESH, 100, 1);
+									((Player) entity).playSound(entity.getLocation(), Sound.HURT, 100, 1);
 								} else if (rNoise == 2){
 									((Player) entity).playSound(entity.getLocation(), Sound.DRINK, 100, 1);
 								} else if (rNoise == 3){
@@ -454,12 +467,12 @@ public class BossSpider extends Boss implements Listener{
 								}
 							}
 						}
-						player.damage(2);
+						player.damage(r.nextInt(2) + 1);
 						int rNoise = r.nextInt(4);
 						if (rNoise == 0){
 							player.playSound(player.getLocation(), Sound.BURP, 100, 1);
 						} else if (rNoise == 1){
-							player.playSound(player.getLocation(), Sound.HURT_FLESH, 100, 1);
+							player.playSound(player.getLocation(), Sound.HURT, 100, 1); //
 						} else if (rNoise == 2){
 							player.playSound(player.getLocation(), Sound.DRINK, 100, 1);
 						} else if (rNoise == 3){
@@ -467,7 +480,6 @@ public class BossSpider extends Boss implements Listener{
 						}
 						if (noises.get(playerName) < 0){
 							noises.remove(playerName);
-							this.cancel();
 						} else {
 							Integer counter = noises.get(playerName);
 							noises.remove(playerName);
@@ -505,7 +517,7 @@ enum Disease {
 		return name;
 	}
 	
-	static Disease getByName(String name) throws IllegalArgumentException{
+	static Disease getByName(String name) throws IllegalArgumentException {
 		if (name == "Dizzy"){
 			return Disease.DIZZY;
 		} else if (name == "Fear"){

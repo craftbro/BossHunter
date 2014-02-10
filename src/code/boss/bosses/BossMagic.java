@@ -57,6 +57,7 @@ import code.boss.main.main;
  */
 @Deprecated
 @Warning(value=true,reason="This Boss Dosnt Work")
+//FIXME im really broken ;c -BossMagic
 public class BossMagic extends Boss implements Listener{
 	public static final List<Entity> captured = new ArrayList<Entity>();
 	static int attacks = 0;
