@@ -24,6 +24,7 @@ import code.boss.bosses.arenas.ArenaArcher;
 import code.boss.bosses.arenas.ArenaBeast;
 import code.boss.bosses.arenas.ArenaBlazo;
 import code.boss.bosses.arenas.ArenaGolem;
+import code.boss.bosses.arenas.ArenaHacker;
 import code.boss.bosses.arenas.ArenaMagic;
 import code.boss.bosses.arenas.ArenaPig;
 import code.boss.bosses.arenas.ArenaSpider;
@@ -161,8 +162,9 @@ public class main extends JavaPlugin implements Listener{
 		world.setGameRuleValue("doMobSpawning", "false");
 		world.setGameRuleValue("mobGriefing", "false");
 		world.setGameRuleValue("doMobLoot", "false");
+		world.setGameRuleValue("doFireTick", "false");
 		
-		arena = new ArenaSpider(this);
+		arena = new ArenaHacker(this);
 		
 		
 

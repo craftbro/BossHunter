@@ -1,5 +1,6 @@
 package code.boss.bosses;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -68,7 +69,8 @@ public class BossSpider extends Boss implements Listener{
 			}
 		}.runTaskLater(plugin, timer += 20);
 		plugin.util.broadcastDelaySound(v_v + "Ok ok im the amazing " + ChatColor.LIGHT_PURPLE + "Venommy" + ChatColor.AQUA + " But you still dont have a chance to help your town!", Sound.SPIDER_IDLE, 1, timer += 80);
-		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We will see...", Sound.VILLAGER_HAGGLE, 1, timer += 68);
+		plugin.util.broadcastDelaySound(v_v + "the ground here was, green and healthy, then my disease spread, and made this!", Sound.AMBIENCE_THUNDER, 0, timer += 70);
+		plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "We will see if you really are as invincible as you say...", Sound.VILLAGER_HAGGLE, 1, timer += 68);
 		plugin.util.broadcastDelaySound(v_v + "Yes we will right now!", Sound.SPIDER_IDLE, 1, timer += 70);
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		new BukkitRunnable(){
@@ -80,12 +82,13 @@ public class BossSpider extends Boss implements Listener{
 				boss.setCustomNameVisible(true);
 				boss.setCanPickupItems(false);
 				boss.setRemoveWhenFarAway(false);
+				boss.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 				diseases = 1;
 				spawned = true;
 				shield = false;
 				startDiseaseWorker();
 			}
-		}.runTaskLater(plugin, timer -= 20);
+		}.runTaskLater(plugin, timer -= 10);
 	}
 	
 	
@@ -322,6 +325,7 @@ public class BossSpider extends Boss implements Listener{
 		spider.setMaxHealth(r.nextInt(4) + 2);
 		spider.setHealth(spider.getMaxHealth());
 		spider.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, r.nextInt(2)));
+		boss.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 		minions.add(spider);
 		new BukkitRunnable(){
 			public void run(){
@@ -369,135 +373,155 @@ public class BossSpider extends Boss implements Listener{
 	public void startDiseaseWorker(){
 		new BukkitRunnable(){
 			public void run(){
-				for (String playerName : dizzy.keySet()){
-					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
-						Player player = Bukkit.getPlayer(playerName);
-						Vector vec = new Vector((double) (r.nextInt(21) - 10) / 10,(double) (r.nextInt(21) - 10) / 10,(double) (r.nextInt(21) - 10) / 10).multiply(0.125);
-						vec.setY((double) r.nextInt(4 + r.nextInt(4) - 1) / 100);
-						if (r.nextBoolean()){
-							player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, r.nextInt(4) + 1, 2));
-						}
-						player.setVelocity(vec);
-						if (dizzy.get(playerName) < 0){
-							dizzy.remove(playerName);
+				try {
+					for (String playerName : dizzy.keySet()){
+						if (Bukkit.getOfflinePlayer(playerName).isOnline()){
+							Player player = Bukkit.getPlayer(playerName);
+							Vector vec = new Vector((double) (r.nextInt(21) - 10) / 10,(double) (r.nextInt(21) - 10) / 10,(double) (r.nextInt(21) - 10) / 10).multiply(0.125);
+							vec.setY((double) r.nextInt(4 + r.nextInt(4) - 1) / 100);
+							if (r.nextBoolean()){
+								player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, r.nextInt(4) + 1, 2));
+							}
+							player.setVelocity(vec);
+							if (dizzy.get(playerName) < 0){
+								dizzy.remove(playerName);
+							} else {
+								Integer counter = dizzy.get(playerName);
+								dizzy.remove(playerName);
+								dizzy.put(playerName, counter - 1);
+							}
 						} else {
-							Integer counter = dizzy.get(playerName);
 							dizzy.remove(playerName);
-							dizzy.put(playerName, counter - 1);
 						}
-					} else {
-						dizzy.remove(playerName);
 					}
+				} catch (ConcurrentModificationException e){
+					
 				}
 			}
 		}.runTaskTimer(plugin, 4, 4);
 		new BukkitRunnable(){
 			public void run(){
-				for (String playerName : fear.keySet()){
-					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
-						Player player = Bukkit.getPlayer(playerName);
-						if (getNearestEntityInRadius(player, 7.45, true) != null){
-							Vector vec = player.getLocation().toVector().subtract(getNearestEntityInRadius(player, 8, true).getLocation().toVector()).normalize().multiply(0.14);
-							vec.setY(0);
-							player.setVelocity(vec);
-						}
-						if (fear.get(playerName) < 0){
-							fear.remove(playerName);
+				try {
+					for (String playerName : fear.keySet()){
+						if (Bukkit.getOfflinePlayer(playerName).isOnline()){
+							Player player = Bukkit.getPlayer(playerName);
+							if (getNearestEntityInRadius(player, 7.45, true) != null){
+								Vector vec = player.getLocation().toVector().subtract(getNearestEntityInRadius(player, 8, true).getLocation().toVector()).normalize().multiply(0.14);
+								vec.setY(0);
+								player.setVelocity(vec);
+							}
+							if (fear.get(playerName) < 0){
+								fear.remove(playerName);
+							} else {
+								Integer counter = fear.get(playerName);
+								fear.remove(playerName);
+								fear.put(playerName, counter - 1);
+							}
 						} else {
-							Integer counter = fear.get(playerName);
 							fear.remove(playerName);
-							fear.put(playerName, counter - 1);
 						}
-					} else {
-						fear.remove(playerName);
 					}
+				} catch (ConcurrentModificationException e){
+					
 				}
 			}
 		}.runTaskTimer(plugin, 2, 2);
 		new BukkitRunnable(){
 			public void run(){
-				for (String playerName : poison.keySet()){
-					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
-						Player player = Bukkit.getPlayer(playerName);
-						player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 16, 2));
-						player.damage((r.nextInt(6) + 5) / 10);
-						if (poison.get(playerName) < 0){
-							poison.remove(playerName);
+				try {
+					for (String playerName : poison.keySet()){
+						if (Bukkit.getOfflinePlayer(playerName).isOnline()){
+							Player player = Bukkit.getPlayer(playerName);
+							player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 16, 2));
+							player.damage((r.nextInt(6) + 5) / 10);
+							if (poison.get(playerName) < 0){
+								poison.remove(playerName);
+							} else {
+								Integer counter = poison.get(playerName);
+								poison.remove(playerName);
+								poison.put(playerName, counter - 1);
+							}
 						} else {
-							Integer counter = poison.get(playerName);
 							poison.remove(playerName);
-							poison.put(playerName, counter - 1);
 						}
-					} else {
-						poison.remove(playerName);
 					}
+				} catch (ConcurrentModificationException e){
+					
 				}
 			}
 		}.runTaskTimer(plugin, 18, 18);
 		new BukkitRunnable(){
 			public void run(){
-				for (String playerName : vulnerable.keySet()){
-					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
-						if (vulnerable.get(playerName) < 0){
-							vulnerable.remove(playerName);
+				try {
+					for (String playerName : vulnerable.keySet()){
+						if (Bukkit.getOfflinePlayer(playerName).isOnline()){
+							if (vulnerable.get(playerName) < 0){
+								vulnerable.remove(playerName);
+							} else {
+								Integer counter = vulnerable.get(playerName);
+								vulnerable.remove(playerName);
+								vulnerable.put(playerName, counter - 1);
+							}
 						} else {
-							Integer counter = vulnerable.get(playerName);
 							vulnerable.remove(playerName);
-							vulnerable.put(playerName, counter - 1);
 						}
-					} else {
-						vulnerable.remove(playerName);
 					}
+				} catch (ConcurrentModificationException e){
+					
 				}
 			}
 		}.runTaskTimer(plugin, 20, 20);
 		new BukkitRunnable(){
 			public void run(){
-				for (String playerName : noises.keySet()){
-					if (Bukkit.getOfflinePlayer(playerName).isOnline()){
-						Player player = Bukkit.getPlayer(playerName);
-						Iterator<Entity> itr = player.getNearbyEntities(6, 6, 6).iterator();
-						while (itr.hasNext()){
-							Entity entity = itr.next();
-							if (entity instanceof Player){
-								((Player) entity).damage(2);
-								int rNoise = r.nextInt(5);
-								if (rNoise == 0){
-									((Player) entity).playSound(entity.getLocation(), Sound.BURP, 100, 1);
-								} else if (rNoise == 1){
-									((Player) entity).playSound(entity.getLocation(), Sound.VILLAGER_DEATH, 100, 1);
-								} else if (rNoise == 2){
-									((Player) entity).playSound(entity.getLocation(), Sound.DRINK, 100, 1);
-								} else if (rNoise == 3){
-									((Player) entity).playSound(entity.getLocation(), Sound.EAT, 100, 1);
-								} else if (rNoise == 4){
-									((Player) entity).playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 100, 1);
+				try {
+					for (String playerName : noises.keySet()){
+						if (Bukkit.getOfflinePlayer(playerName).isOnline()){
+							Player player = Bukkit.getPlayer(playerName);
+							Iterator<Entity> itr = player.getNearbyEntities(6, 6, 6).iterator();
+							while (itr.hasNext()){
+								Entity entity = itr.next();
+								if (entity instanceof Player){
+									((Player) entity).damage(2);
+									int rNoise = r.nextInt(5);
+									if (rNoise == 0){
+										((Player) entity).playSound(entity.getLocation(), Sound.BURP, 100, 1);
+									} else if (rNoise == 1){
+										((Player) entity).playSound(entity.getLocation(), Sound.VILLAGER_DEATH, 100, 1);
+									} else if (rNoise == 2){
+										((Player) entity).playSound(entity.getLocation(), Sound.DRINK, 100, 1);
+									} else if (rNoise == 3){
+										((Player) entity).playSound(entity.getLocation(), Sound.EAT, 100, 1);
+									} else if (rNoise == 4){
+										((Player) entity).playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 100, 1);
+									}
 								}
 							}
-						}
-						player.damage(r.nextInt(2) + 1);
-						int rNoise = r.nextInt(5);
-						if (rNoise == 0){
-							player.playSound(player.getLocation(), Sound.BURP, 100, 1);
-						} else if (rNoise == 1){
-							player.playSound(player.getLocation(), Sound.VILLAGER_DEATH, 100, 1);
-						} else if (rNoise == 2){
-							player.playSound(player.getLocation(), Sound.DRINK, 100, 1);
-						} else if (rNoise == 3){
-							player.playSound(player.getLocation(), Sound.EAT, 100, 1);
-						} else if (rNoise == 4){
-							player.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 100, 1);
-						}
-						if (noises.get(playerName) < 0){
-							noises.remove(playerName);
+							player.damage(r.nextInt(2) + 1);
+							int rNoise = r.nextInt(5);
+							if (rNoise == 0){
+								player.playSound(player.getLocation(), Sound.BURP, 100, 1);
+							} else if (rNoise == 1){
+								player.playSound(player.getLocation(), Sound.VILLAGER_DEATH, 100, 1);
+							} else if (rNoise == 2){
+								player.playSound(player.getLocation(), Sound.DRINK, 100, 1);
+							} else if (rNoise == 3){
+								player.playSound(player.getLocation(), Sound.EAT, 100, 1);
+							} else if (rNoise == 4){
+								player.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 100, 1);
+							}
+							if (noises.get(playerName) < 0){
+								noises.remove(playerName);
+							} else {
+								Integer counter = noises.get(playerName);
+								noises.remove(playerName);
+								noises.put(playerName, counter - 1);
+							}
 						} else {
-							Integer counter = noises.get(playerName);
 							noises.remove(playerName);
-							noises.put(playerName, counter - 1);
 						}
-					} else {
-						noises.remove(playerName);
 					}
+				} catch (ConcurrentModificationException e){
+					
 				}
 			}
 		}.runTaskTimer(plugin, 10, 10);
