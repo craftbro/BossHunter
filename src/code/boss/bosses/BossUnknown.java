@@ -58,7 +58,7 @@ public class BossUnknown extends Boss implements Listener{
 		new BukkitRunnable(){
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(plugin.arena.getSpawn(), EntityType.CHICKEN);
-				boss.setMaxHealth(525);
+				boss.setMaxHealth(525 * Bukkit.getOnlinePlayers().length);
 				boss.setHealth(boss.getMaxHealth());
 				boss.setCustomName(ChatColor.GRAY + "Shield");
 				boss.setCustomNameVisible(false);
@@ -138,19 +138,19 @@ public class BossUnknown extends Boss implements Listener{
 					event.setCancelled(true);
 				}
 			}
-			if (spawned && boss.getHealth() / 5.25 <= 80 && !optimized1){
+			if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 80 && !optimized1){
 				optimized1 = true;
 				attacks = 2;
 			}
-			if (spawned && boss.getHealth() / 5.25 <= 60 && !optimized2){
+			if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 60 && !optimized2){
 				optimized2 = true;
 				attacks = 3;
 			}
-			if (spawned && boss.getHealth() / 5.25 <= 40 && !optimized3){
+			if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 40 && !optimized3){
 				optimized3 = true;
 				attacks = 4;
 			}
-			if (spawned && boss.getHealth() / 5.25 <= 30 && !optimized4){
+			if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 30 && !optimized4){
 				optimized4 = true;
 				attacks = 5;
 			}

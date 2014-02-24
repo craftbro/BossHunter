@@ -98,8 +98,8 @@ public class BossBeast extends Boss implements Listener{
 		new BukkitRunnable(){
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getEyeLocation(), EntityType.ZOMBIE);
-				boss.setMaxHealth(650);
-				boss.setHealth(650);
+				boss.setMaxHealth(650 * Bukkit.getOnlinePlayers().length);
+				boss.setHealth(boss.getMaxHealth());
 				boss.setCustomName(ChatColor.DARK_GREEN + "Beast");
 				boss.setCustomNameVisible(true);
 				((Zombie) boss).setBaby(true);
@@ -182,7 +182,7 @@ public class BossBeast extends Boss implements Listener{
 				for (ItemStack armor : boss.getEquipment().getArmorContents()){
 					armor.setDurability((short) 0);
 				}
-				if (boss.getHealth() / 6.5 <= 70 && !optimized1){
+				if (boss.getHealth() / (boss.getMaxHealth() / 100) <= 70 && !optimized1){
 					optimized1 = true;
 					spawned = false;
 					plugin.util.broadcastDelaySound(plugin.util.randomNameFormat() + "Was that really what you was that scared of? Now show yourself!", Sound.VILLAGER_YES, 1, 0);
@@ -194,7 +194,7 @@ public class BossBeast extends Boss implements Listener{
 					Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 						public void run(){
 							boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(randomPlayer().getEyeLocation(), EntityType.ZOMBIE);
-							boss.setMaxHealth(650);
+							boss.setMaxHealth(650 * Bukkit.getOnlinePlayers().length);
 							boss.setHealth(health);
 							boss.setCustomName(ChatColor.DARK_GREEN + "Beast");
 							boss.setCustomNameVisible(true);
@@ -218,11 +218,11 @@ public class BossBeast extends Boss implements Listener{
 						}
 					}, 140);
 				}
-				if (spawned && boss.getHealth() / 6.5 <= 50 && !optimized2){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 50 && !optimized2){
 					optimized2 = true;
 					attacks = 3;
 				}
-				if (spawned && boss.getHealth() / 6.5 <= 30 && !optimized3){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 30 && !optimized3){
 					optimized3 = true;
 					attacks = 4;
 				}

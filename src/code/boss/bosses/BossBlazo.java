@@ -82,7 +82,7 @@ public class BossBlazo extends Boss implements Listener{
 				boss.setCustomName(ChatColor.RED + bossName);
 				boss.setCustomNameVisible(true);
 				boss.setMaxHealth(675);
-				boss.setHealth(675);
+				boss.setHealth(boss.getMaxHealth());
 				boss.setRemoveWhenFarAway(false);
 				spawned = true;
 				attacks = 1;

@@ -103,7 +103,7 @@ public class BossArcher extends Boss implements Listener{
 				boss.setCustomName(ChatColor.GREEN + "Archer King");
 				boss.setCustomNameVisible(true);
 				boss.setRemoveWhenFarAway(false);
-				boss.setMaxHealth(600 * Bukkit.getOnlinePlayers().length);
+				boss.setMaxHealth(675 * Bukkit.getOnlinePlayers().length);
 				boss.setHealth(boss.getMaxHealth());
 				spawned = true;
 				attacks = 1;
