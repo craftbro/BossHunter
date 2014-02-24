@@ -42,14 +42,14 @@ import code.boss.effect.ras.RasEffect;
 import code.boss.main.main;
 
 /**
- * The class of the boss "Unnamed"
+ * The class of the boss "Magic Block"
  * @author rasmusrune
  */
 public class BossUnnamed  extends Boss implements Listener{
 	static int attacks = 0;
 	public static int timer = 0;
 	public String u_v = ChatColor.BLACK + "[" + ChatColor.DARK_GRAY + "???" + ChatColor.BLACK + "] " + ChatColor.GRAY;
-	public String b_v = ChatColor.DARK_BLUE + "[" + ChatColor.BLUE + "Unnamed" + ChatColor.DARK_BLUE + "] " + ChatColor.AQUA;
+	public String b_v = ChatColor.DARK_BLUE + "[" + ChatColor.BLUE + "Magic Block" + ChatColor.DARK_BLUE + "] " + ChatColor.AQUA;
 	
 	Random r = new Random();
 
@@ -69,9 +69,9 @@ public class BossUnnamed  extends Boss implements Listener{
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(new Location(Bukkit.getWorld("BOSS"), 1032, 57, -1130), EntityType.MAGMA_CUBE);
 				((MagmaCube) boss).setSize(2);
-				boss.setMaxHealth(525);
-				boss.setHealth(525);
-				boss.setCustomName(ChatColor.BLUE + "Unnamed");
+				boss.setMaxHealth(600 * Bukkit.getOnlinePlayers().length);
+				boss.setHealth(boss.getMaxHealth());
+				boss.setCustomName(ChatColor.BLUE + "Magic Block");
 				boss.setCustomNameVisible(true);
 				boss.setCanPickupItems(false);
 				boss.setRemoveWhenFarAway(false);
@@ -130,19 +130,19 @@ public class BossUnnamed  extends Boss implements Listener{
 	public void onEntityDamage(EntityDamageEvent event){
 		if (spawned){
 			if (event.getEntity().getUniqueId() == boss.getUniqueId()){
-				if (spawned && boss.getHealth() / 5.25 <= 80 && !optimized1){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 80 && !optimized1){
 					optimized1 = true;
 					attacks = 2;
 				}
-				if (spawned && boss.getHealth() / 5.25 <= 60 && !optimized2){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 60 && !optimized2){
 					optimized2 = true;
 					attacks = 3;
 				}
-				if (spawned && boss.getHealth() / 5.25 <= 40 && !optimized3){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 40 && !optimized3){
 					optimized3 = true;
 					attacks = 4;
 				}
-				if (spawned && boss.getHealth() / 5.25 <= 30 && !optimized4){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 30 && !optimized4){
 					optimized4 = true;
 					attacks = 5;
 				}
@@ -260,7 +260,9 @@ public class BossUnnamed  extends Boss implements Listener{
 					clone.setSize(2);
 					clone.setMaxHealth(20);
 					clone.setHealth(20);
-					clone.setCustomName(ChatColor.BLUE + "Unnamed");
+					if (attacker instanceof LivingEntity){
+						clone.setCustomName(((LivingEntity) attacker).getCustomName());
+					}
 					clone.setCustomNameVisible(true);
 					clone.setCanPickupItems(false);
 					clone.setRemoveWhenFarAway(false);

@@ -63,7 +63,7 @@ public class BossHacker extends Boss implements Listener{
 		new BukkitRunnable(){
 			public void run(){
 				boss = (LivingEntity) Bukkit.getWorld("BOSS").spawnEntity(plugin.arena.getSpawn(), EntityType.SKELETON);
-				boss.setMaxHealth(475);
+				boss.setMaxHealth(425 * Bukkit.getOnlinePlayers().length);
 				boss.setHealth(boss.getMaxHealth());
 				boss.setCustomName(ChatColor.DARK_RED + "Hacker");
 				boss.setCustomNameVisible(false);
@@ -156,15 +156,15 @@ public class BossHacker extends Boss implements Listener{
 				if (mode == 1){
 					event.setDamage(event.getDamage() / 2);
 				}
-				if (spawned && boss.getHealth() / 4.75 <= 80 && !optimized1){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 80 && !optimized1){
 					optimized1 = true;
 					attacks = 2;
 				}
-				if (spawned && boss.getHealth() / 4.75 <= 60 && !optimized2){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 60 && !optimized2){
 					optimized2 = true;
 					attacks = 3;
 				}
-				if (spawned && boss.getHealth() / 4.75 <= 40 && !optimized3){
+				if (spawned && boss.getHealth() / (boss.getMaxHealth() / 100) <= 40 && !optimized3){
 					optimized3 = true;
 					attacks = 4;
 					((Skeleton) boss).setSkeletonType(SkeletonType.WITHER);
@@ -253,7 +253,12 @@ public class BossHacker extends Boss implements Listener{
 	
 	public void minions(Location loc){
 		if (getMinionsSize() < (5 + r.nextInt(4) + (r.nextBoolean() ? r.nextInt(3) : 0)) / 2){
-			Skeleton player = loc.getWorld().spawn(loc, Skeleton.class);
+			final Skeleton player = loc.getWorld().spawn(loc, Skeleton.class);
+			if (optimized3){
+				if (r.nextInt(3) == 0){
+					player.setSkeletonType(SkeletonType.WITHER);
+				}
+			}
 			String basedOf = plugin.util.randomName();
 			player.setCustomName(basedOf + " 2.0");
 			player.setCustomNameVisible(true);
@@ -262,6 +267,11 @@ public class BossHacker extends Boss implements Listener{
 			player.getEquipment().setLeggings(getRandomArmorPiece());
 			player.getEquipment().setChestplate(getRandomArmorPiece());
 			minions.add(player);
+			new BukkitRunnable(){
+				public void run(){
+					ParticleEffect.ANGRY_VILLAGER.animateAtLocation(player.getEyeLocation(), 10, 1);
+				}
+			}.runTaskLater(plugin, r.nextInt(401) + 100);
 		}
 	}
 	

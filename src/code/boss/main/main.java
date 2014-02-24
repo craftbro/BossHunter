@@ -157,14 +157,14 @@ public class main extends JavaPlugin implements Listener{
 		
 		util.copyWorld().setGameRuleValue("keepInventory", "true");
 		
-		World world = Bukkit.createWorld(new WorldCreator("worldB"));
+		World world = Bukkit.createWorld(new WorldCreator("BOSS"));
 		world.setGameRuleValue("keepInventory", "true");
 		world.setGameRuleValue("doMobSpawning", "false");
 		world.setGameRuleValue("mobGriefing", "false");
 		world.setGameRuleValue("doMobLoot", "false");
 		world.setGameRuleValue("doFireTick", "false");
 		
-		arena = new ArenaUnnamed(this);
+		arena = new ArenaBeast(this);
 		
 		
 
