@@ -164,7 +164,7 @@ public class main extends JavaPlugin implements Listener{
 		world.setGameRuleValue("doMobLoot", "false");
 		world.setGameRuleValue("doFireTick", "false");
 		
-		arena = new ArenaHacker(this);
+		arena = new ArenaUnnamed(this);
 		
 		
 

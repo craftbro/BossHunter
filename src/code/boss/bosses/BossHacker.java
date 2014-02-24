@@ -180,7 +180,7 @@ public class BossHacker extends Boss implements Listener{
 		if (spawned){
 			if (event.getDamager().getUniqueId() == boss.getUniqueId() && event.getEntity() instanceof Player){
 				if (instakill){
-					event.setDamage(Float.MAX_VALUE);
+					event.setDamage(event.getDamage() * 2);
 					ParticleEffect.LARGE_EXPLODE.animateAtLocation(event.getEntity().getLocation(), 5, 2);
 				}
 				if (mode == 0){
@@ -252,7 +252,7 @@ public class BossHacker extends Boss implements Listener{
 	
 	
 	public void minions(Location loc){
-		if (getMinionsSize() < 5 + r.nextInt(4) + (r.nextBoolean() ? r.nextInt(3) : 0)){
+		if (getMinionsSize() < (5 + r.nextInt(4) + (r.nextBoolean() ? r.nextInt(3) : 0)) / 2){
 			Skeleton player = loc.getWorld().spawn(loc, Skeleton.class);
 			String basedOf = plugin.util.randomName();
 			player.setCustomName(basedOf + " 2.0");

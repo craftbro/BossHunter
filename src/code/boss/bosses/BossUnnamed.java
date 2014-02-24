@@ -1,5 +1,6 @@
 package code.boss.bosses;
 
+import java.util.List;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -349,9 +350,9 @@ public class BossUnnamed  extends Boss implements Listener{
 				public void run(){
 					timer--;
 					if (target instanceof LivingEntity){
-						ParticleEffect.SMOKE.animateAtLocation(((LivingEntity) target).getEyeLocation(), 10, 1);
+						ParticleEffect.SMOKE.animateAtLocation(((LivingEntity) target).getEyeLocation(), 10, (float) 0.3);
 					} else {
-						ParticleEffect.SMOKE.animateAtLocation(target.getLocation(), 10, 1);
+						ParticleEffect.SMOKE.animateAtLocation(target.getLocation(), 10, (float) 0.3);
 					}
 					if (timer < 0){
 						this.cancel();
@@ -400,8 +401,8 @@ public class BossUnnamed  extends Boss implements Listener{
 				timer++;
 				Location currentLoc = loc.add(vec);
 				ParticleEffect.RED_DUST.animateAtLocation(currentLoc, 2, 0);
-				target.setFireTicks(target.getFireTicks() + 115);
 				if (timer > 100){
+					target.setFireTicks(target.getFireTicks() + 115);
 					break;
 				}
 				if (!currentLoc.getBlock().isEmpty()){
@@ -436,6 +437,7 @@ public class BossUnnamed  extends Boss implements Listener{
 					}
 					if (timer > 140){
 						this.cancel();
+						ParticleEffect.CLOUD.animateAtLocation(attacker.getLocation(), 15, 1);
 						Iterator<Entity> itr2 = attacker.getNearbyEntities(4.5, 4.5, 4.5).iterator();
 						while (itr2.hasNext()){
 							Entity entity = itr2.next();
@@ -451,14 +453,16 @@ public class BossUnnamed  extends Boss implements Listener{
 				public void run(){
 					timer++;
 					RasEffect.ANGRY_VILLAGER.display(attacker.getLocation(), (float) 0.6, (float) 0.6, (float) 0.6, 1, 10);
-					Iterator<Entity> itr = attacker.getNearbyEntities(6, 6, 6).iterator();
+					List<Entity> near = attacker.getNearbyEntities(6, 6, 6);
+					Iterator<Entity> itr = near.iterator();
 					while (itr.hasNext()){
 						Entity entity = itr.next();
 						if (entity instanceof Damageable){
 							((Damageable) entity).damage(1);
 						}
 					}
-					if (timer > 140){
+					timer += 4 * attacker.getNearbyEntities(2.5, 2.5, 2.5).size();
+					if (timer > 100){
 						this.cancel();
 					}
 				}
@@ -520,7 +524,6 @@ public class BossUnnamed  extends Boss implements Listener{
 			new BukkitRunnable(){
 				int counter = 0;
 				Location currentLoc = aLoc.add(vec);
-				
 				public void run() {
 					counter++;
 					Location tLoc = target.getLocation();
@@ -535,7 +538,7 @@ public class BossUnnamed  extends Boss implements Listener{
 							if (target instanceof LivingEntity){
 								((LivingEntity) target).damage(8);
 							}
-							RasEffect.LARGE_EXPLODE.display(currentLoc, 2, 2, 2, 1, 70);
+							RasEffect.LARGE_EXPLODE.display(currentLoc, 2, 2, 2, 1, 58);
 							target.setVelocity(tLoc.toVector().subtract(aLoc.toVector()).normalize().multiply(2));
 							this.cancel();
 							break;
@@ -553,11 +556,11 @@ public class BossUnnamed  extends Boss implements Listener{
 	public void attackFive(int id, Entity attacker){
 		switch (id){
 		case 0:
-			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 250, 7);
+			ParticleEffect.PORTAL.animateAtLocation(attacker.getLocation(), 100, 7);
 			for (Player target2 : Bukkit.getOnlinePlayers()){
 				target2.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 205, 0));
-				target2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 190, 1));
-				target2.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 170, 9));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 190, 2));
+				target2.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 150, 9));
 				ParticleEffect.FIREWORK_SPARK.animateAtLocation(target2.getLocation(), 10, (float) 1.5);
 			}
 			break;
@@ -571,7 +574,6 @@ public class BossUnnamed  extends Boss implements Listener{
 				new BukkitRunnable(){
 					int counter = 0;
 					Location currentLoc = sLoc.add(vec);
-					
 					public void run() {
 						Location tLoc = target.getLocation();
 						Vector vec = tLoc.toVector().subtract(currentLoc.toVector()).normalize();
@@ -599,7 +601,7 @@ public class BossUnnamed  extends Boss implements Listener{
 						}
 						if (!currentLoc.getBlock().isEmpty() && !currentLoc.getBlock().isLiquid()){
 							currentLoc.getWorld().playSound(currentLoc, Sound.AMBIENCE_THUNDER, 4, 1);
-							target.setFireTicks(target.getFireTicks() + 65);
+							target.setFireTicks(target.getFireTicks() + 35);
 							target.damage(8);
 							this.cancel();
 						}
