@@ -32,6 +32,10 @@ import code.boss.effect.ParticleEffect;
 import code.boss.item.SkullStack;
 import code.boss.main.main;
 
+/**
+ * The class of the boss "Hacker"
+ * @author rasmusrune
+ */
 public class BossHacker extends Boss implements Listener{
 	static int attacks = 0;
 	public static int timer = 0;
@@ -106,7 +110,7 @@ public class BossHacker extends Boss implements Listener{
 			}
 			if (r.nextInt(80) == 0){
 				for (Player player : Bukkit.getOnlinePlayers()){
-					if (boss.hasLineOfSight(player) && boss.getLocation().distanceSquared(player.getLocation()) < 10){
+					if (boss.hasLineOfSight(player)){
 						if (boss.getEquipment().getItemInHand().getType() == Material.IRON_AXE){
 							damageWithEvent(player, (float) 3.5, DamageCause.ENTITY_ATTACK, boss, false);
 						} else {
@@ -186,7 +190,7 @@ public class BossHacker extends Boss implements Listener{
 				if (mode == 0){
 					event.setDamage(event.getDamage() * 2);
 					timesInARow++;
-					if (timesInARow >= 5){
+					if (timesInARow >= 4){
 						mode = 1;
 						timesInARow = 0;
 					}
@@ -194,7 +198,7 @@ public class BossHacker extends Boss implements Listener{
 			} else if (event.getDamager() instanceof Player && event.getEntity().getUniqueId() == boss.getUniqueId()){
 				if (mode == 1){
 					timesInARow++;
-					if (timesInARow >= 5){
+					if (timesInARow >= 4){
 						mode = 0;
 						timesInARow = 0;
 					}
